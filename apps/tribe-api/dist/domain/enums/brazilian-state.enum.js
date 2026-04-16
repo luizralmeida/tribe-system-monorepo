@@ -1,0 +1,34 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BrazilianState = void 0;
+var BrazilianState;
+(function (BrazilianState) {
+    BrazilianState["AC"] = "AC";
+    BrazilianState["AL"] = "AL";
+    BrazilianState["AP"] = "AP";
+    BrazilianState["AM"] = "AM";
+    BrazilianState["BA"] = "BA";
+    BrazilianState["CE"] = "CE";
+    BrazilianState["DF"] = "DF";
+    BrazilianState["ES"] = "ES";
+    BrazilianState["GO"] = "GO";
+    BrazilianState["MA"] = "MA";
+    BrazilianState["MT"] = "MT";
+    BrazilianState["MS"] = "MS";
+    BrazilianState["MG"] = "MG";
+    BrazilianState["PA"] = "PA";
+    BrazilianState["PB"] = "PB";
+    BrazilianState["PR"] = "PR";
+    BrazilianState["PE"] = "PE";
+    BrazilianState["PI"] = "PI";
+    BrazilianState["RJ"] = "RJ";
+    BrazilianState["RN"] = "RN";
+    BrazilianState["RS"] = "RS";
+    BrazilianState["RO"] = "RO";
+    BrazilianState["RR"] = "RR";
+    BrazilianState["SC"] = "SC";
+    BrazilianState["SP"] = "SP";
+    BrazilianState["SE"] = "SE";
+    BrazilianState["TO"] = "TO";
+})(BrazilianState || (exports.BrazilianState = BrazilianState = {}));
+//# sourceMappingURL=brazilian-state.enum.js.map

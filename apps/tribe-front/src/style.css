@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: oklch(0.97 0.012 285.82);
+  --color-primary-100: oklch(0.93 0.034 272.78);
+  --color-primary-200: oklch(0.87 0.067 274.3);
+  --color-primary-300: oklch(0.78 0.115 274.19);
+  --color-primary-400: oklch(0.67 0.157 273.36);
+  --color-primary-500: oklch(0.55 0.19 272.71);
+  --color-primary-600: oklch(0.48 0.185 272.63);
+  --color-primary-700: oklch(0.4 0.158 272.84);
+  --color-primary-800: oklch(0.34 0.126 273.05);
+  --color-primary-900: oklch(0.28 0.101 273.3);
+  --color-primary-950: oklch(0.18 0.063 273.5);
+
+  --font-sans: "Inter", "Outfit", system-ui, sans-serif;
+}
+
+:root {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-50;
+  }
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300 hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700;
+  transition: background-color 0.2s;
+}

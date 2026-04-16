@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { AddressTypeOrmEntity } from './address.typeorm-entity.js';
 
-@Entity('tb_event')
+@Entity('event')
 export class EventTypeOrmEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id!: number;

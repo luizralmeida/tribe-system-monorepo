@@ -23,6 +23,7 @@ const find_event_with_users_use_case_js_1 = require("../../application/use-cases
 const update_event_use_case_js_1 = require("../../application/use-cases/event/update-event.use-case.js");
 const delete_event_use_case_js_1 = require("../../application/use-cases/event/delete-event.use-case.js");
 const associate_user_event_use_case_js_1 = require("../../application/use-cases/event/associate-user-event.use-case.js");
+const get_event_stats_use_case_js_1 = require("../../application/use-cases/event/get-event-stats.use-case.js");
 const create_event_dto_js_1 = require("../../application/dtos/event/create-event.dto.js");
 const update_event_dto_js_1 = require("../../application/dtos/event/update-event.dto.js");
 const associate_user_event_dto_js_1 = require("../../application/dtos/event/associate-user-event.dto.js");
@@ -31,15 +32,17 @@ let EventController = class EventController {
     createEventUseCase;
     findEventsUseCase;
     findEventByIdUseCase;
+    getEventStatsUseCase;
     findEventWithUsersUseCase;
     updateEventUseCase;
     deleteEventUseCase;
     associateUserEventUseCase;
     dissociateUserEventUseCase;
-    constructor(createEventUseCase, findEventsUseCase, findEventByIdUseCase, findEventWithUsersUseCase, updateEventUseCase, deleteEventUseCase, associateUserEventUseCase, dissociateUserEventUseCase) {
+    constructor(createEventUseCase, findEventsUseCase, findEventByIdUseCase, getEventStatsUseCase, findEventWithUsersUseCase, updateEventUseCase, deleteEventUseCase, associateUserEventUseCase, dissociateUserEventUseCase) {
         this.createEventUseCase = createEventUseCase;
         this.findEventsUseCase = findEventsUseCase;
         this.findEventByIdUseCase = findEventByIdUseCase;
+        this.getEventStatsUseCase = getEventStatsUseCase;
         this.findEventWithUsersUseCase = findEventWithUsersUseCase;
         this.updateEventUseCase = updateEventUseCase;
         this.deleteEventUseCase = deleteEventUseCase;
@@ -52,6 +55,12 @@ let EventController = class EventController {
     async findAll(query, req) {
         return this.findEventsUseCase.execute({
             ...query,
+            userId: req.user.id,
+            userRole: req.user.role,
+        });
+    }
+    async getStats(req) {
+        return this.getEventStatsUseCase.execute({
             userId: req.user.id,
             userRole: req.user.role,
         });
@@ -100,6 +109,14 @@ __decorate([
     __metadata("design:paramtypes", [pagination_dto_js_1.PaginationQueryDto, Object]),
     __metadata("design:returntype", Promise)
 ], EventController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('stats'),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], EventController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
@@ -157,6 +174,7 @@ exports.EventController = EventController = __decorate([
     __metadata("design:paramtypes", [create_event_use_case_js_1.CreateEventUseCase,
         find_events_use_case_js_1.FindEventsUseCase,
         find_event_by_id_use_case_js_1.FindEventByIdUseCase,
+        get_event_stats_use_case_js_1.GetEventStatsUseCase,
         find_event_with_users_use_case_js_1.FindEventWithUsersUseCase,
         update_event_use_case_js_1.UpdateEventUseCase,
         delete_event_use_case_js_1.DeleteEventUseCase,

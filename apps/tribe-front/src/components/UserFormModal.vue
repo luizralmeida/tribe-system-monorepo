@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { userService } from '../services/user.service';
-import { X, Loader2, Save, User, Mail, Phone, Shield, Lock } from 'lucide-vue-next';
+import { X, Loader2, Save, User as UserIcon, Mail, Phone, Shield, Lock } from 'lucide-vue-next';
+import type { User } from '../types';
+import { UserRole } from '../types';
 
-const props = defineProps({
-  user: { type: Object, default: null }
-});
+interface Props {
+  user?: User | null;
+}
+
+const props = defineProps<Props>();
 
 const emit = defineEmits(['close', 'success']);
 
@@ -13,7 +17,7 @@ const formData = ref({
   name: '',
   email: '',
   phone: '',
-  role: 'VIEW',
+  role: 'VIEW' as UserRole,
   password: '',
   active: true
 });
@@ -41,8 +45,8 @@ const handleSubmit = async () => {
   try {
     if (props.user) {
       // For updates, password is optional
-      const updateData = { ...formData.value };
-      if (!updateData.password) delete (updateData as any).password;
+      const updateData: Partial<User> & { password?: string } = { ...formData.value };
+      if (!updateData.password) delete updateData.password;
       await userService.update(props.user.id, updateData);
     } else {
       if (!formData.value.password) {
@@ -81,7 +85,7 @@ const handleSubmit = async () => {
             <div class="space-y-1">
               <label class="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Nome Completo</label>
               <div class="relative">
-                <User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <UserIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input v-model="formData.name" type="text" required placeholder="João Silva" class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 text-slate-800 dark:text-white" />
               </div>
             </div>

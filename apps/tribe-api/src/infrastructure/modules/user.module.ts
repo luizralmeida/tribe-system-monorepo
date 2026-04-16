@@ -6,6 +6,7 @@ import { USER_REPOSITORY } from '../../domain/repositories/user.repository.inter
 import { CreateUserUseCase } from '../../application/use-cases/user/create-user.use-case.js';
 import { FindUsersUseCase } from '../../application/use-cases/user/find-users.use-case.js';
 import { FindUserByIdUseCase } from '../../application/use-cases/user/find-user-by-id.use-case.js';
+import { GetUserStatsUseCase } from '../../application/use-cases/user/get-user-stats.use-case.js';
 import { UpdateUserUseCase } from '../../application/use-cases/user/update-user.use-case.js';
 import { DeleteUserUseCase } from '../../application/use-cases/user/delete-user.use-case.js';
 import { UserController } from '../../presentation/controllers/user.controller.js';
@@ -22,6 +23,7 @@ import { AuthModule } from './auth.module.js';
     CreateUserUseCase,
     FindUsersUseCase,
     FindUserByIdUseCase,
+    GetUserStatsUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
   ],

@@ -54,6 +54,6 @@ __decorate([
     __metadata("design:type", Object)
 ], UserEventTypeOrmEntity.prototype, "deletedAt", void 0);
 exports.UserEventTypeOrmEntity = UserEventTypeOrmEntity = __decorate([
-    (0, typeorm_1.Entity)('tb_user_event')
+    (0, typeorm_1.Entity)('user_event')
 ], UserEventTypeOrmEntity);
 //# sourceMappingURL=user-event.typeorm-entity.js.map

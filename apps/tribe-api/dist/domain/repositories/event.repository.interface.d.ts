@@ -9,6 +9,11 @@ export interface UpdateEventData {
     addressId?: number;
     date?: Date;
 }
+export interface EventStats {
+    total: number;
+    completed: number;
+    future: number;
+}
 export interface IEventRepository {
     findById(id: number): Promise<Event | null>;
     findAll(options?: {
@@ -28,5 +33,6 @@ export interface IEventRepository {
     save(event: CreateEventData): Promise<Event>;
     update(id: number, data: UpdateEventData): Promise<Event>;
     softDelete(id: number): Promise<void>;
+    getStats(userId?: number): Promise<EventStats>;
 }
 export declare const EVENT_REPOSITORY: unique symbol;

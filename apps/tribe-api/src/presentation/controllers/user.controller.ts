@@ -14,12 +14,13 @@ import { UserRole } from '../../domain/enums/user-role.enum.js';
 import { CreateUserUseCase } from '../../application/use-cases/user/create-user.use-case.js';
 import { FindUsersUseCase } from '../../application/use-cases/user/find-users.use-case.js';
 import { FindUserByIdUseCase } from '../../application/use-cases/user/find-user-by-id.use-case.js';
+import { GetUserStatsUseCase } from '../../application/use-cases/user/get-user-stats.use-case.js';
 import { UpdateUserUseCase } from '../../application/use-cases/user/update-user.use-case.js';
 import { DeleteUserUseCase } from '../../application/use-cases/user/delete-user.use-case.js';
 import { CreateUserDto } from '../../application/dtos/user/create-user.dto.js';
 import { UpdateUserDto } from '../../application/dtos/user/update-user.dto.js';
 import { UserResponseDto } from '../../application/dtos/user/user-response.dto.js';
-import { PaginationQueryDto, PaginatedResponseDto } from '../../application/dtos/pagination.dto.js';
+import { PaginationWithFilterQueryDto, PaginatedResponseDto } from '../../application/dtos/pagination.dto.js';
 
 @Controller('users')
 export class UserController {
@@ -27,6 +28,7 @@ export class UserController {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly findUsersUseCase: FindUsersUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
+    private readonly getUserStatsUseCase: GetUserStatsUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
   ) {}
@@ -40,9 +42,15 @@ export class UserController {
   @Get()
   @Roles(UserRole.SUPER)
   async findAll(
-    @Query() query: PaginationQueryDto,
+    @Query() query: PaginationWithFilterQueryDto,
   ): Promise<PaginatedResponseDto<UserResponseDto>> {
     return this.findUsersUseCase.execute(query);
+  }
+
+  @Get('stats')
+  @Roles(UserRole.SUPER)
+  async getStats() {
+    return this.getUserStatsUseCase.execute();
   }
 
   @Get(':id')

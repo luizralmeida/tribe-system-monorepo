@@ -15,6 +15,11 @@ export class PaginationQueryDto {
   limit?: number = 20;
 }
 
+export class PaginationWithFilterQueryDto extends PaginationQueryDto {
+  @IsOptional()
+  search?: string;
+}
+
 export class PaginatedResponseDto<T> {
   readonly data: T[];
   readonly total: number;

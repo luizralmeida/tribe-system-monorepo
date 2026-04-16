@@ -11,7 +11,7 @@ import {
 import { UserTypeOrmEntity } from './user.typeorm-entity.js';
 import { EventTypeOrmEntity } from './event.typeorm-entity.js';
 
-@Entity('tb_user_event')
+@Entity('user_event')
 export class UserEventTypeOrmEntity {
   @PrimaryColumn({ name: 'fk_user', type: 'bigint', unsigned: true })
   userId!: number;

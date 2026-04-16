@@ -22,6 +22,7 @@ import {
   AssociateUserEventUseCase,
   DissociateUserEventUseCase,
 } from '../../application/use-cases/event/associate-user-event.use-case.js';
+import { GetEventStatsUseCase } from '../../application/use-cases/event/get-event-stats.use-case.js';
 import { CreateEventDto } from '../../application/dtos/event/create-event.dto.js';
 import { UpdateEventDto } from '../../application/dtos/event/update-event.dto.js';
 import { AssociateUserEventDto } from '../../application/dtos/event/associate-user-event.dto.js';
@@ -37,6 +38,7 @@ export class EventController {
     private readonly createEventUseCase: CreateEventUseCase,
     private readonly findEventsUseCase: FindEventsUseCase,
     private readonly findEventByIdUseCase: FindEventByIdUseCase,
+    private readonly getEventStatsUseCase: GetEventStatsUseCase,
     private readonly findEventWithUsersUseCase: FindEventWithUsersUseCase,
     private readonly updateEventUseCase: UpdateEventUseCase,
     private readonly deleteEventUseCase: DeleteEventUseCase,
@@ -58,6 +60,15 @@ export class EventController {
   ) {
     return this.findEventsUseCase.execute({
       ...query,
+      userId: req.user.id,
+      userRole: req.user.role,
+    });
+  }
+
+  @Get('stats')
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  async getStats(@Request() req: AuthenticatedRequest) {
+    return this.getEventStatsUseCase.execute({
       userId: req.user.id,
       userRole: req.user.role,
     });

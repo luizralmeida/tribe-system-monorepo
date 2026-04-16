@@ -1,0 +1,16 @@
+import { GuestStatus } from './enums';
+
+export interface Guest {
+  id: number;
+  name: string;
+  phone: string;
+  status: GuestStatus;
+  attended: boolean;
+  eventId: number;
+  email: string;
+  responsibleId: number;
+  isChild: boolean;
+  age?: number;
+  createdAt: string;
+  updatedAt: string | null;
+}

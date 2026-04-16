@@ -65,6 +65,17 @@ let EventTypeOrmRepository = class EventTypeOrmRepository {
     async softDelete(id) {
         await this.ormRepository.softDelete(id);
     }
+    async getStats(userId) {
+        const qb = this.ormRepository.createQueryBuilder('event');
+        if (userId) {
+            qb.innerJoin('user_event', 'ue', 'ue.fk_event = event.id AND ue.fk_user = :userId', { userId });
+        }
+        const total = await qb.getCount();
+        const completedQb = qb.clone().andWhere('event.date < :now', { now: new Date() });
+        const futureQb = qb.clone().andWhere('event.date >= :now', { now: new Date() });
+        const [completed, future] = await Promise.all([completedQb.getCount(), futureQb.getCount()]);
+        return { total, completed, future };
+    }
     toDomain(entity) {
         return new event_entity_js_1.Event({
             id: Number(entity.id),

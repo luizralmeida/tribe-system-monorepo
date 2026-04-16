@@ -71,6 +71,18 @@ export class EventTypeOrmRepository implements IEventRepository {
     await this.ormRepository.softDelete(id);
   }
 
+  async getStats(userId?: number): Promise<{ total: number; completed: number; future: number }> {
+    const qb = this.ormRepository.createQueryBuilder('event');
+    if (userId) {
+      qb.innerJoin('user_event', 'ue', 'ue.fk_event = event.id AND ue.fk_user = :userId', { userId });
+    }
+    const total = await qb.getCount();
+    const completedQb = qb.clone().andWhere('event.date < :now', { now: new Date() });
+    const futureQb = qb.clone().andWhere('event.date >= :now', { now: new Date() });
+    const [completed, future] = await Promise.all([completedQb.getCount(), futureQb.getCount()]);
+    return { total, completed, future };
+  }
+
   private toDomain(entity: EventTypeOrmEntity): Event {
     return new Event({
       id: Number(entity.id),

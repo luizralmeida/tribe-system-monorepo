@@ -25,5 +25,10 @@ export declare class EventTypeOrmRepository implements IEventRepository {
     save(event: CreateEventData): Promise<Event>;
     update(id: number, data: UpdateEventData): Promise<Event>;
     softDelete(id: number): Promise<void>;
+    getStats(userId?: number): Promise<{
+        total: number;
+        completed: number;
+        future: number;
+    }>;
     private toDomain;
 }

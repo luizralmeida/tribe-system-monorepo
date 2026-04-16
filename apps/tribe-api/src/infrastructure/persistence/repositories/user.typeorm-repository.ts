@@ -4,6 +4,10 @@ import { Repository } from 'typeorm';
 import { IUserRepository } from '../../../domain/repositories/user.repository.interface.js';
 import { User } from '../../../domain/entities/user.entity.js';
 import { UserTypeOrmEntity } from '../entities/user.typeorm-entity.js';
+import { UserFilter } from 'src/application/dtos/user/user-filter.dto.js';
+import { FindOptionsWhere, Like } from 'typeorm';
+import { UserRole } from '../../../domain/enums/user-role.enum.js';
+import { UserStats } from '../../../domain/repositories/user.repository.interface.js';
 
 @Injectable()
 export class UserTypeOrmRepository implements IUserRepository {
@@ -28,15 +32,34 @@ export class UserTypeOrmRepository implements IUserRepository {
   }
 
   async findAll(
-    options: { page: number; limit: number } = { page: 1, limit: 20 },
+    options: { page: number; limit: number; filter: UserFilter } = { page: 1, limit: 20, filter: {} },
   ): Promise<{ data: User[]; total: number }> {
     const [entities, total] = await this.ormRepository.findAndCount({
       skip: (options.page - 1) * options.limit,
       take: options.limit,
       order: { createdAt: 'DESC' },
+      where: this.extractLikeFilter(options.filter)
     });
 
     return { data: entities.map((e) => this.toDomain(e)), total };
+  }
+
+  private extractLikeFilter(filter: UserFilter): FindOptionsWhere<UserTypeOrmEntity> {
+    const where: FindOptionsWhere<UserTypeOrmEntity> = {};
+
+    if (filter.name) {
+      where.name = Like(`%${filter.name}%`);
+    }
+
+    if (filter.email) {
+      where.email = Like(`%${filter.email}%`);
+    }
+
+    if (filter.phone) {
+      where.phone = Like(`%${filter.phone}%`);
+    }
+
+    return where;
   }
 
   async save(
@@ -66,6 +89,26 @@ export class UserTypeOrmRepository implements IUserRepository {
 
   async existsByPhone(phone: string): Promise<boolean> {
     return this.ormRepository.exists({ where: { phone } });
+  }
+
+  async getStats(): Promise<UserStats> {
+    const qb = this.ormRepository.createQueryBuilder('user');
+    const total = await qb.getCount();
+    
+    const activeQb = qb.clone().andWhere('user.active = :active', { active: true });
+    const active = await activeQb.getCount();
+
+    const futureEventsQb = qb.clone()
+      .innerJoin('user_event', 'ue', 'ue.fk_user = user.id')
+      .innerJoin('event', 'e', 'e.id = ue.fk_event')
+      .andWhere('e.date >= :now', { now: new Date() })
+      .select('COUNT(DISTINCT user.id)', 'count');
+
+    const futureResult = await futureEventsQb.getRawOne();
+    const withFutureEvents = parseInt(futureResult.count, 10) || 0;
+    const admin = await qb.clone().andWhere('user.role = :role', { role: UserRole.SUPER }).getCount();
+
+    return { total, active, withFutureEvents, admin };
   }
 
   private toDomain(entity: UserTypeOrmEntity): User {

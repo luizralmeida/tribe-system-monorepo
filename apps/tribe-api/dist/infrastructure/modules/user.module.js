@@ -15,6 +15,7 @@ const user_repository_interface_js_1 = require("../../domain/repositories/user.r
 const create_user_use_case_js_1 = require("../../application/use-cases/user/create-user.use-case.js");
 const find_users_use_case_js_1 = require("../../application/use-cases/user/find-users.use-case.js");
 const find_user_by_id_use_case_js_1 = require("../../application/use-cases/user/find-user-by-id.use-case.js");
+const get_user_stats_use_case_js_1 = require("../../application/use-cases/user/get-user-stats.use-case.js");
 const update_user_use_case_js_1 = require("../../application/use-cases/user/update-user.use-case.js");
 const delete_user_use_case_js_1 = require("../../application/use-cases/user/delete-user.use-case.js");
 const user_controller_js_1 = require("../../presentation/controllers/user.controller.js");
@@ -34,6 +35,7 @@ exports.UserModule = UserModule = __decorate([
             create_user_use_case_js_1.CreateUserUseCase,
             find_users_use_case_js_1.FindUsersUseCase,
             find_user_by_id_use_case_js_1.FindUserByIdUseCase,
+            get_user_stats_use_case_js_1.GetUserStatsUseCase,
             update_user_use_case_js_1.UpdateUserUseCase,
             delete_user_use_case_js_1.DeleteUserUseCase,
         ],

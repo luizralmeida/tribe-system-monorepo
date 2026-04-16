@@ -18,6 +18,7 @@ const user_event_repository_interface_js_1 = require("../../domain/repositories/
 const create_event_use_case_js_1 = require("../../application/use-cases/event/create-event.use-case.js");
 const find_events_use_case_js_1 = require("../../application/use-cases/event/find-events.use-case.js");
 const find_event_by_id_use_case_js_1 = require("../../application/use-cases/event/find-event-by-id.use-case.js");
+const get_event_stats_use_case_js_1 = require("../../application/use-cases/event/get-event-stats.use-case.js");
 const find_event_with_users_use_case_js_1 = require("../../application/use-cases/event/find-event-with-users.use-case.js");
 const update_event_use_case_js_1 = require("../../application/use-cases/event/update-event.use-case.js");
 const delete_event_use_case_js_1 = require("../../application/use-cases/event/delete-event.use-case.js");
@@ -42,6 +43,7 @@ exports.EventModule = EventModule = __decorate([
             create_event_use_case_js_1.CreateEventUseCase,
             find_events_use_case_js_1.FindEventsUseCase,
             find_event_by_id_use_case_js_1.FindEventByIdUseCase,
+            get_event_stats_use_case_js_1.GetEventStatsUseCase,
             find_event_with_users_use_case_js_1.FindEventWithUsersUseCase,
             update_event_use_case_js_1.UpdateEventUseCase,
             delete_event_use_case_js_1.DeleteEventUseCase,

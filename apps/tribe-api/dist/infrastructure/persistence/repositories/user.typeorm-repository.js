@@ -18,6 +18,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_js_1 = require("../../../domain/entities/user.entity.js");
 const user_typeorm_entity_js_1 = require("../entities/user.typeorm-entity.js");
+const typeorm_3 = require("typeorm");
+const user_role_enum_js_1 = require("../../../domain/enums/user-role.enum.js");
 let UserTypeOrmRepository = class UserTypeOrmRepository {
     ormRepository;
     constructor(ormRepository) {
@@ -35,13 +37,27 @@ let UserTypeOrmRepository = class UserTypeOrmRepository {
         const entity = await this.ormRepository.findOne({ where: { phone } });
         return entity ? this.toDomain(entity) : null;
     }
-    async findAll(options = { page: 1, limit: 20 }) {
+    async findAll(options = { page: 1, limit: 20, filter: {} }) {
         const [entities, total] = await this.ormRepository.findAndCount({
             skip: (options.page - 1) * options.limit,
             take: options.limit,
             order: { createdAt: 'DESC' },
+            where: this.extractLikeFilter(options.filter)
         });
         return { data: entities.map((e) => this.toDomain(e)), total };
+    }
+    extractLikeFilter(filter) {
+        const where = {};
+        if (filter.name) {
+            where.name = (0, typeorm_3.Like)(`%${filter.name}%`);
+        }
+        if (filter.email) {
+            where.email = (0, typeorm_3.Like)(`%${filter.email}%`);
+        }
+        if (filter.phone) {
+            where.phone = (0, typeorm_3.Like)(`%${filter.phone}%`);
+        }
+        return where;
     }
     async save(user) {
         const entity = this.ormRepository.create(user);
@@ -61,6 +77,21 @@ let UserTypeOrmRepository = class UserTypeOrmRepository {
     }
     async existsByPhone(phone) {
         return this.ormRepository.exists({ where: { phone } });
+    }
+    async getStats() {
+        const qb = this.ormRepository.createQueryBuilder('user');
+        const total = await qb.getCount();
+        const activeQb = qb.clone().andWhere('user.active = :active', { active: true });
+        const active = await activeQb.getCount();
+        const futureEventsQb = qb.clone()
+            .innerJoin('user_event', 'ue', 'ue.fk_user = user.id')
+            .innerJoin('event', 'e', 'e.id = ue.fk_event')
+            .andWhere('e.date >= :now', { now: new Date() })
+            .select('COUNT(DISTINCT user.id)', 'count');
+        const futureResult = await futureEventsQb.getRawOne();
+        const withFutureEvents = parseInt(futureResult.count, 10) || 0;
+        const admin = await qb.clone().andWhere('user.role = :role', { role: user_role_enum_js_1.UserRole.SUPER }).getCount();
+        return { total, active, withFutureEvents, admin };
     }
     toDomain(entity) {
         return new user_entity_js_1.User({

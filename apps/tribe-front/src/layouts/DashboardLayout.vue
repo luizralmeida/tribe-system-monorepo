@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '../store/auth';
-import { LogOut, Users, LayoutDashboard, Menu, X } from 'lucide-vue-next';
+import { LogOut, Menu, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const authStore = useAuthStore();
@@ -10,10 +10,15 @@ const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
-const navItems = [
-  { name: 'Dashboard', route: 'dashboard', icon: LayoutDashboard },
-  { name: 'Usuários', route: 'users', icon: Users },
-];
+import { navigationConfig } from '../config/navigation';
+import { computed } from 'vue';
+
+const navItems = computed(() => {
+  const currentRole = authStore.user?.role || 'COMMON';
+  return navigationConfig.filter(
+    (item) => !item.roles || item.roles.includes(currentRole)
+  );
+});
 </script>
 
 <template>

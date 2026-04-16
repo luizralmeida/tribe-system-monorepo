@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PaginatedResponseDto = exports.PaginationQueryDto = void 0;
+exports.PaginatedResponseDto = exports.PaginationWithFilterQueryDto = exports.PaginationQueryDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 class PaginationQueryDto {
@@ -31,6 +31,14 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], PaginationQueryDto.prototype, "limit", void 0);
+class PaginationWithFilterQueryDto extends PaginationQueryDto {
+    search;
+}
+exports.PaginationWithFilterQueryDto = PaginationWithFilterQueryDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], PaginationWithFilterQueryDto.prototype, "search", void 0);
 class PaginatedResponseDto {
     data;
     total;

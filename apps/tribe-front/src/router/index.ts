@@ -15,8 +15,13 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'dashboard',
-          component: () => import('../pages/DashboardPage.vue'),
+          name: 'dashboard', // We keep the name dashboard for routing compatibility or rename to events. Let's keep dashboard as it's the root of Layout
+          component: () => import('../pages/EventsPage.vue'),
+        },
+        {
+          path: 'event/:id',
+          name: 'eventDashboard',
+          component: () => import('../pages/EventDashboardPage.vue'),
         },
         {
           path: 'users',

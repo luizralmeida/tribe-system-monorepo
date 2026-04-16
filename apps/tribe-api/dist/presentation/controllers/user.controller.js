@@ -19,6 +19,7 @@ const user_role_enum_js_1 = require("../../domain/enums/user-role.enum.js");
 const create_user_use_case_js_1 = require("../../application/use-cases/user/create-user.use-case.js");
 const find_users_use_case_js_1 = require("../../application/use-cases/user/find-users.use-case.js");
 const find_user_by_id_use_case_js_1 = require("../../application/use-cases/user/find-user-by-id.use-case.js");
+const get_user_stats_use_case_js_1 = require("../../application/use-cases/user/get-user-stats.use-case.js");
 const update_user_use_case_js_1 = require("../../application/use-cases/user/update-user.use-case.js");
 const delete_user_use_case_js_1 = require("../../application/use-cases/user/delete-user.use-case.js");
 const create_user_dto_js_1 = require("../../application/dtos/user/create-user.dto.js");
@@ -28,12 +29,14 @@ let UserController = class UserController {
     createUserUseCase;
     findUsersUseCase;
     findUserByIdUseCase;
+    getUserStatsUseCase;
     updateUserUseCase;
     deleteUserUseCase;
-    constructor(createUserUseCase, findUsersUseCase, findUserByIdUseCase, updateUserUseCase, deleteUserUseCase) {
+    constructor(createUserUseCase, findUsersUseCase, findUserByIdUseCase, getUserStatsUseCase, updateUserUseCase, deleteUserUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.findUsersUseCase = findUsersUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
+        this.getUserStatsUseCase = getUserStatsUseCase;
         this.updateUserUseCase = updateUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
     }
@@ -42,6 +45,9 @@ let UserController = class UserController {
     }
     async findAll(query) {
         return this.findUsersUseCase.execute(query);
+    }
+    async getStats() {
+        return this.getUserStatsUseCase.execute();
     }
     async findById(id) {
         return this.findUserByIdUseCase.execute(id);
@@ -67,9 +73,16 @@ __decorate([
     (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [pagination_dto_js_1.PaginationQueryDto]),
+    __metadata("design:paramtypes", [pagination_dto_js_1.PaginationWithFilterQueryDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('stats'),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER),
@@ -100,6 +113,7 @@ exports.UserController = UserController = __decorate([
     __metadata("design:paramtypes", [create_user_use_case_js_1.CreateUserUseCase,
         find_users_use_case_js_1.FindUsersUseCase,
         find_user_by_id_use_case_js_1.FindUserByIdUseCase,
+        get_user_stats_use_case_js_1.GetUserStatsUseCase,
         update_user_use_case_js_1.UpdateUserUseCase,
         delete_user_use_case_js_1.DeleteUserUseCase])
 ], UserController);

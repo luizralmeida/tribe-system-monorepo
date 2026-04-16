@@ -1,14 +1,16 @@
 import { defineStore } from 'pinia';
 import api from '../services/api';
+import type { User } from '../types';
+import { UserRole } from '../types';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as any,
+    user: null as User | null,
     token: localStorage.getItem('token') || null,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
-    isSuper: (state) => state.user?.role === 'SUPER',
+    isSuper: (state) => state.user?.role === UserRole.SUPER,
   },
   actions: {
     async login(credentials: any) {

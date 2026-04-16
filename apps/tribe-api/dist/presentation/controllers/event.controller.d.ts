@@ -6,6 +6,7 @@ import { FindEventWithUsersUseCase } from '../../application/use-cases/event/fin
 import { UpdateEventUseCase } from '../../application/use-cases/event/update-event.use-case.js';
 import { DeleteEventUseCase } from '../../application/use-cases/event/delete-event.use-case.js';
 import { AssociateUserEventUseCase, DissociateUserEventUseCase } from '../../application/use-cases/event/associate-user-event.use-case.js';
+import { GetEventStatsUseCase } from '../../application/use-cases/event/get-event-stats.use-case.js';
 import { CreateEventDto } from '../../application/dtos/event/create-event.dto.js';
 import { UpdateEventDto } from '../../application/dtos/event/update-event.dto.js';
 import { AssociateUserEventDto } from '../../application/dtos/event/associate-user-event.dto.js';
@@ -20,14 +21,16 @@ export declare class EventController {
     private readonly createEventUseCase;
     private readonly findEventsUseCase;
     private readonly findEventByIdUseCase;
+    private readonly getEventStatsUseCase;
     private readonly findEventWithUsersUseCase;
     private readonly updateEventUseCase;
     private readonly deleteEventUseCase;
     private readonly associateUserEventUseCase;
     private readonly dissociateUserEventUseCase;
-    constructor(createEventUseCase: CreateEventUseCase, findEventsUseCase: FindEventsUseCase, findEventByIdUseCase: FindEventByIdUseCase, findEventWithUsersUseCase: FindEventWithUsersUseCase, updateEventUseCase: UpdateEventUseCase, deleteEventUseCase: DeleteEventUseCase, associateUserEventUseCase: AssociateUserEventUseCase, dissociateUserEventUseCase: DissociateUserEventUseCase);
+    constructor(createEventUseCase: CreateEventUseCase, findEventsUseCase: FindEventsUseCase, findEventByIdUseCase: FindEventByIdUseCase, getEventStatsUseCase: GetEventStatsUseCase, findEventWithUsersUseCase: FindEventWithUsersUseCase, updateEventUseCase: UpdateEventUseCase, deleteEventUseCase: DeleteEventUseCase, associateUserEventUseCase: AssociateUserEventUseCase, dissociateUserEventUseCase: DissociateUserEventUseCase);
     create(dto: CreateEventDto): Promise<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>;
     findAll(query: PaginationQueryDto, req: AuthenticatedRequest): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>>;
+    getStats(req: AuthenticatedRequest): Promise<import("../../application/dtos/event/event-stats.dto.js").EventStatsResponseDto>;
     findById(id: number, req: AuthenticatedRequest): Promise<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>;
     findWithUsers(id: number): Promise<import("../../application/dtos/event/event-response.dto.js").EventWithUsersResponseDto>;
     update(id: number, dto: UpdateEventDto): Promise<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>;

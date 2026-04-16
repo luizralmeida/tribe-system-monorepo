@@ -2,6 +2,9 @@ export declare class PaginationQueryDto {
     page?: number;
     limit?: number;
 }
+export declare class PaginationWithFilterQueryDto extends PaginationQueryDto {
+    search?: string;
+}
 export declare class PaginatedResponseDto<T> {
     readonly data: T[];
     readonly total: number;

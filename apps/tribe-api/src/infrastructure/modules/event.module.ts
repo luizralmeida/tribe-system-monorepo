@@ -9,6 +9,7 @@ import { USER_EVENT_REPOSITORY } from '../../domain/repositories/user-event.repo
 import { CreateEventUseCase } from '../../application/use-cases/event/create-event.use-case.js';
 import { FindEventsUseCase } from '../../application/use-cases/event/find-events.use-case.js';
 import { FindEventByIdUseCase } from '../../application/use-cases/event/find-event-by-id.use-case.js';
+import { GetEventStatsUseCase } from '../../application/use-cases/event/get-event-stats.use-case.js';
 import { FindEventWithUsersUseCase } from '../../application/use-cases/event/find-event-with-users.use-case.js';
 import { UpdateEventUseCase } from '../../application/use-cases/event/update-event.use-case.js';
 import { DeleteEventUseCase } from '../../application/use-cases/event/delete-event.use-case.js';
@@ -33,6 +34,7 @@ import { AddressModule } from './address.module.js';
     CreateEventUseCase,
     FindEventsUseCase,
     FindEventByIdUseCase,
+    GetEventStatsUseCase,
     FindEventWithUsersUseCase,
     UpdateEventUseCase,
     DeleteEventUseCase,

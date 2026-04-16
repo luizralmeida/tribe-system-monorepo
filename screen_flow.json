@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "home": {
+      "metadata": {
+        "description": "Totalizador de eventos do sistema: quantidade total de eventos, eventos já concluídos e eventos futuros. Listagem de eventos com CRUD completo. Única tela para usuários comuns (apenas visualização de seus próprios eventos).",
+        "restricted_to": ["super_user", "common_user"]
+      },
+      "eventos": [
+        {
+          "id": "evento_1",
+          "config": {
+            "view": "dashboard",
+            "components": ["totalizadores", "listagem_convidados"]
+          }
+        },
+        {
+          "id": "evento_2",
+          "config": {
+            "view": "dashboard",
+            "components": ["totalizadores", "listagem_convidados"]
+          }
+        }
+      ]
+    },
+    "usuarios": {
+	    "metadata": {
+		    "description": "Totalizadores de usuários do sistema: total geral, total de ativos, total de usuários com evento futuro. Abaixo, é necessário que haja uma listagem de usuários com possibilidades de filtros considerando a arquitetura de sua tabela do banco de dados."
+	    }
+    },
+    "admin_only": {
+      "description": "Menu disponível apenas para super usuário"
+    }
+  }
+}

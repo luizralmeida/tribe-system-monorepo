@@ -1,20 +1,36 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { userService } from '../services/user.service';
-import { UserPlus, Edit, Trash2, Search, MoreVertical, Shield, ShieldCheck, User as UserIcon } from 'lucide-vue-next';
+import { 
+  UserPlus, 
+  Edit, 
+  Trash2, 
+  Search, 
+  MoreVertical, 
+  Shield, 
+  ShieldCheck, 
+  User as UserIcon, 
+  Calendar1,
+  Users,
+  Check,
+  ShieldUser, 
+} from 'lucide-vue-next';
 import UserFormModal from '../components/UserFormModal.vue';
+import type { User, UserStats, PaginatedResponse } from '../types';
+import { UserRole } from '../types';
 
-const users = ref<any[]>([]);
+const users = ref<User[]>([]);
+const stats = ref<UserStats | null>(null);
 const pagination = ref({ total: 0, page: 1, limit: 10 });
 const isLoading = ref(true);
 const isModalOpen = ref(false);
-const selectedUser = ref<any>(null);
+const selectedUser = ref<User | null>(null);
 const searchQuery = ref('');
 
 const fetchUsers = async () => {
   isLoading.value = true;
   try {
-    const response = await userService.findAll({ 
+    const response: PaginatedResponse<User> = await userService.findAll({ 
       page: pagination.value.page, 
       limit: pagination.value.limit,
       search: searchQuery.value 
@@ -28,12 +44,24 @@ const fetchUsers = async () => {
   }
 };
 
+const fetchStats = async () => {
+  isLoading.value = true;
+  try {
+    const response: UserStats = await userService.getStats();
+    stats.value = response;
+  } catch (error) {
+    console.error('Failed to fetch stats', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 const openCreateModal = () => {
   selectedUser.value = null;
   isModalOpen.value = true;
 };
 
-const openEditModal = (user: any) => {
+const openEditModal = (user: User) => {
   selectedUser.value = user;
   isModalOpen.value = true;
 };
@@ -54,7 +82,10 @@ const handleFormSuccess = () => {
   fetchUsers();
 };
 
-onMounted(fetchUsers);
+onMounted(() => {
+  fetchUsers();
+  fetchStats();
+});
 </script>
 
 <template>
@@ -71,6 +102,40 @@ onMounted(fetchUsers);
         <UserPlus class="w-5 h-5" />
         <span>Novo Usuário</span>
       </button>
+    </div>
+
+    <!-- Stats -->
+    <div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <section class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <Users class="w-5 h-5" />
+            <p class="text-slate-500">Total</p>
+          </section>
+          <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.total }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <section class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <Check class="w-5 h-5" />
+            <p class="text-slate-500">Ativos</p>
+          </section>
+          <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.active }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <section class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <Calendar1 class="w-5 h-5" />
+            <p class="text-slate-500">Com eventos futuros</p>
+          </section>
+          <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.withFutureEvents }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <section class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <ShieldUser class="w-5 h-5" />
+            <p class="text-slate-500">Admins</p>
+          </section>
+          <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.admin }}</p>
+        </div>
+      </div>
     </div>
 
     <!-- Filters & Search -->
@@ -127,9 +192,9 @@ onMounted(fetchUsers);
               <td class="px-6 py-4">
                 <span :class="[
                   'inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold leading-none',
-                  user.role === 'SUPER' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  user.role === UserRole.SUPER ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                 ]">
-                  <ShieldCheck v-if="user.role === 'SUPER'" class="w-3 h-3" />
+                  <ShieldCheck v-if="user.role === UserRole.SUPER" class="w-3 h-3" />
                   <Shield v-else class="w-3 h-3" />
                   {{ user.role }}
                 </span>
@@ -177,7 +242,7 @@ onMounted(fetchUsers);
           <div class="mt-6 flex items-center justify-between">
             <span :class="[
                   'inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold',
-                  user.role === 'SUPER' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  user.role === UserRole.SUPER ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                 ]">
               {{ user.role }}
             </span>

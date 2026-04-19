@@ -23,6 +23,8 @@ services:
   tribe-front:
     build:
       context: ./apps/tribe-front
+      args:
+        - VITE_API_URL=http://187.77.41.41/api
     container_name: tribe-front
     expose:
       - "80"

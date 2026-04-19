@@ -23,9 +23,6 @@ let CreateGuestUseCase = class CreateGuestUseCase {
         this.guestRepository = guestRepository;
     }
     async execute(input) {
-        if (input.data.isChild && !input.data.responsibleId) {
-            throw new common_1.BadRequestException('responsibleId is required when isChild is true');
-        }
         if (input.data.isChild) {
             await this.validateResponsible(input.data.responsibleId, input.eventId);
         }
@@ -38,6 +35,7 @@ let CreateGuestUseCase = class CreateGuestUseCase {
             eventId: input.eventId,
             responsibleId: input.data.responsibleId ?? 0,
             isChild: input.data.isChild,
+            age: input.data.age,
         });
         return guest_response_dto_js_1.GuestResponseDto.fromDomain(guest);
     }

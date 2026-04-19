@@ -20,6 +20,7 @@ class CreateGuestDto {
     status;
     isChild;
     responsibleId;
+    age;
 }
 exports.CreateGuestDto = CreateGuestDto;
 __decorate([
@@ -55,4 +56,10 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateGuestDto.prototype, "responsibleId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], CreateGuestDto.prototype, "age", void 0);
 //# sourceMappingURL=create-guest.dto.js.map

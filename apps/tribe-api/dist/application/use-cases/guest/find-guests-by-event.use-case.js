@@ -11,29 +11,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var FindGuestsByEventUseCase_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindGuestsByEventUseCase = void 0;
 const common_1 = require("@nestjs/common");
 const guest_repository_interface_js_1 = require("../../../domain/repositories/guest.repository.interface.js");
 const pagination_dto_js_1 = require("../../dtos/pagination.dto.js");
 const guest_response_dto_js_1 = require("../../dtos/guest/guest-response.dto.js");
-let FindGuestsByEventUseCase = class FindGuestsByEventUseCase {
+const common_2 = require("@nestjs/common");
+let FindGuestsByEventUseCase = FindGuestsByEventUseCase_1 = class FindGuestsByEventUseCase {
     guestRepository;
     constructor(guestRepository) {
         this.guestRepository = guestRepository;
     }
+    logger = new common_2.Logger(FindGuestsByEventUseCase_1.name);
     async execute(input) {
-        const page = input.page ?? 1;
-        const limit = input.limit ?? 20;
+        this.logger.warn("[execute] Searching for guests by event");
+        const page = input.query.page ?? 1;
+        const limit = input.query.limit ?? 20;
         const { data, total } = await this.guestRepository.findByEventId({
             eventId: input.eventId,
-            status: input.status,
-            name: input.name,
-            isChild: input.isChild,
-            attended: input.attended,
+            name: input.query.search,
+            attended: input.query.attended,
+            status: input.query.status,
+            isChild: input.query.isChild,
+            onlyPrimary: input.query.onlyPrimary,
             page,
             limit,
         });
+        this.logger.log("[execute] Guest's search succeeded");
         return new pagination_dto_js_1.PaginatedResponseDto({
             data: data.map(guest_response_dto_js_1.GuestResponseDto.fromDomain),
             total,
@@ -43,7 +49,7 @@ let FindGuestsByEventUseCase = class FindGuestsByEventUseCase {
     }
 };
 exports.FindGuestsByEventUseCase = FindGuestsByEventUseCase;
-exports.FindGuestsByEventUseCase = FindGuestsByEventUseCase = __decorate([
+exports.FindGuestsByEventUseCase = FindGuestsByEventUseCase = FindGuestsByEventUseCase_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(guest_repository_interface_js_1.GUEST_REPOSITORY)),
     __metadata("design:paramtypes", [Object])

@@ -6,4 +6,5 @@ export declare class CreateGuestDto {
     status?: GuestStatus;
     isChild: boolean;
     responsibleId?: number;
+    age?: number;
 }

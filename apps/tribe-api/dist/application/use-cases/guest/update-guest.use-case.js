@@ -27,6 +27,12 @@ let UpdateGuestUseCase = class UpdateGuestUseCase {
             throw new common_1.NotFoundException('Guest not found in this event');
         }
         const updated = await this.guestRepository.update(input.id, input.data);
+        if (!guest.responsibleId && (input.data.email || input.data.phone)) {
+            await this.guestRepository.updateDependentsContact(input.id, {
+                email: input.data.email,
+                phone: input.data.phone,
+            });
+        }
         return guest_response_dto_js_1.GuestResponseDto.fromDomain(updated);
     }
 };

@@ -8,8 +8,9 @@ export interface GuestProps {
     attended: boolean;
     eventId: number;
     email: string;
-    responsibleId: number;
+    responsibleId?: number | null;
     isChild: boolean;
+    companionCount?: number;
     age?: number;
     createdAt: Date;
     updatedAt?: Date | null;
@@ -22,8 +23,10 @@ export declare class Guest extends BaseEntity {
     readonly attended: boolean;
     readonly eventId: number;
     readonly email: string;
-    readonly responsibleId: number;
+    readonly responsibleId?: number | null;
     readonly isChild: boolean;
+    readonly age?: number;
+    readonly companionCount?: number;
     constructor(props: GuestProps);
     isConfirmed(): boolean;
     isDependent(): boolean;

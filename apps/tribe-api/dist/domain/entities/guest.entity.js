@@ -12,6 +12,8 @@ class Guest extends entity_base_js_1.BaseEntity {
     email;
     responsibleId;
     isChild;
+    age;
+    companionCount;
     constructor(props) {
         super(props);
         this.name = props.name;
@@ -22,6 +24,8 @@ class Guest extends entity_base_js_1.BaseEntity {
         this.email = props.email;
         this.responsibleId = props.responsibleId;
         this.isChild = props.isChild;
+        this.age = props.age;
+        this.companionCount = props.companionCount;
     }
     isConfirmed() {
         return this.status === guest_status_enum_js_1.GuestStatus.CONFIRMED;

@@ -2,6 +2,7 @@
 import { useAuthStore } from '../store/auth';
 import { LogOut, Menu, X } from 'lucide-vue-next';
 import { ref } from 'vue';
+import ThemeToggle from '../components/ThemeToggle.vue';
 
 const authStore = useAuthStore();
 const isSidebarOpen = ref(false);
@@ -14,9 +15,9 @@ import { navigationConfig } from '../config/navigation';
 import { computed } from 'vue';
 
 const navItems = computed(() => {
-  const currentRole = authStore.user?.role || 'COMMON';
+  const currentRole = authStore.user?.role || 'VIEW';
   return navigationConfig.filter(
-    (item) => !item.roles || item.roles.includes(currentRole)
+    (item) => !item.roles || item.roles.includes(currentRole as any)
   );
 });
 </script>
@@ -72,12 +73,16 @@ const navItems = computed(() => {
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-w-0">
-      <header class="h-16 flex items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 lg:hidden">
-        <button @click="toggleSidebar" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+      <header class="h-16 flex items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <button @click="toggleSidebar" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:hidden">
           <Menu class="w-6 h-6" />
         </button>
-        <h1 class="text-xl font-bold text-primary-600 dark:text-primary-400">Tribe</h1>
-        <div class="w-10"></div> <!-- Spacer -->
+        <h1 class="text-xl font-bold text-primary-600 dark:text-primary-400 lg:hidden">Tribe</h1>
+        <div class="hidden lg:block"></div> <!-- Left spacer for desktop to center title if needed or keep layout -->
+        
+        <div class="flex items-center gap-4 ml-auto">
+          <ThemeToggle />
+        </div>
       </header>
 
       <div class="p-6 md:p-8 overflow-y-auto">

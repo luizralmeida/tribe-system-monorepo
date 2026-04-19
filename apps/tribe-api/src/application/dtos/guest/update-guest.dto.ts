@@ -3,10 +3,12 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { GuestStatus } from '../../../domain/enums/guest-status.enum.js';
 
 export class UpdateGuestDto {
@@ -37,4 +39,14 @@ export class UpdateGuestDto {
   @IsOptional()
   @IsBoolean()
   isChild?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  age?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  responsibleId?: number;
 }

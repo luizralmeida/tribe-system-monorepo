@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventUserDto = exports.EventWithUsersResponseDto = exports.EventResponseDto = void 0;
+const address_response_dto_js_1 = require("../address/address-response.dto.js");
 class EventResponseDto {
     id;
     name;
     addressId;
     date;
+    address;
     createdAt;
     updatedAt;
     constructor(event) {
@@ -15,6 +17,9 @@ class EventResponseDto {
         this.date = event.date;
         this.createdAt = event.createdAt;
         this.updatedAt = event.updatedAt;
+        if (event.address) {
+            this.address = address_response_dto_js_1.AddressResponseDto.fromDomain(event.address);
+        }
     }
     static fromDomain(event) {
         return new EventResponseDto(event);

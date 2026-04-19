@@ -1,9 +1,9 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { GuestStatus } from '../../../domain/enums/guest-status.enum.js';
-import { PaginationQueryDto } from '../pagination.dto.js';
+import { PaginationWithFilterQueryDto } from '../pagination.dto.js';
 
-export class GuestFilterDto extends PaginationQueryDto {
+export class GuestFilterDto extends PaginationWithFilterQueryDto {
   @IsOptional()
   @IsEnum(GuestStatus)
   status?: GuestStatus;
@@ -21,4 +21,9 @@ export class GuestFilterDto extends PaginationQueryDto {
   @Type(() => Boolean)
   @IsBoolean()
   attended?: boolean;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  onlyPrimary?: boolean;
 }

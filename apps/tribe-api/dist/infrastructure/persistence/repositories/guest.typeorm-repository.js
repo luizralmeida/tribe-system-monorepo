@@ -28,12 +28,20 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
         const entity = await this.ormRepository.findOne({ where: { id } });
         return entity ? this.toDomain(entity) : null;
     }
+    async findByPhone(phone) {
+        const entities = await this.ormRepository.find({
+            where: { phone, deletedAt: undefined },
+            order: { createdAt: 'DESC' },
+        });
+        return entities.map((e) => this.toDomain(e));
+    }
     async findByEventId(filters) {
         const qb = this.ormRepository
             .createQueryBuilder('guest')
-            .where('guest.fk_event = :eventId', { eventId: filters.eventId });
+            .loadRelationCountAndMap('guest.companionCount', 'guest.companions')
+            .where('guest.fk_event = :eventId AND guest.deleted_at IS NULL', { eventId: filters.eventId });
         this.applyFilters(qb, filters);
-        qb.orderBy('guest.created_at', 'DESC')
+        qb.orderBy('guest.name', 'ASC')
             .skip((filters.page - 1) * filters.limit)
             .take(filters.limit);
         const [entities, total] = await qb.getManyAndCount();
@@ -41,7 +49,7 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
     }
     async findDependents(responsibleId) {
         const entities = await this.ormRepository.find({
-            where: { responsibleId, isChild: true },
+            where: { responsibleId },
         });
         return entities.map((e) => this.toDomain(e));
     }
@@ -64,7 +72,17 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
         await this.ormRepository.softDelete(id);
     }
     async softDeleteByResponsibleId(responsibleId) {
-        await this.ormRepository.softDelete({ responsibleId, isChild: true });
+        await this.ormRepository.softDelete({ responsibleId });
+    }
+    async updateDependentsContact(responsibleId, data) {
+        const updateData = {};
+        if (data.email)
+            updateData.email = data.email;
+        if (data.phone)
+            updateData.phone = data.phone;
+        if (Object.keys(updateData).length > 0) {
+            await this.ormRepository.update({ responsibleId }, updateData);
+        }
     }
     async getDashboard(eventId) {
         const qb = this.ormRepository
@@ -78,7 +96,10 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
         const attended = await qb.clone()
             .andWhere('guest.attended = :attended', { attended: true })
             .getCount();
-        return { total, confirmed, notConfirmed: total - confirmed, attended };
+        const nonPayingChildrenCount = await qb.clone()
+            .andWhere('guest.is_child = :isChild', { isChild: true })
+            .getCount();
+        return { total, confirmed, notConfirmed: total - confirmed, attended, nonPayingChildrenCount };
     }
     applyFilters(qb, filters) {
         if (filters.status) {
@@ -93,6 +114,9 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
         if (filters.attended !== undefined) {
             qb.andWhere('guest.attended = :attended', { attended: filters.attended });
         }
+        if (filters.onlyPrimary) {
+            qb.andWhere('guest.fk_responsible IS NULL');
+        }
     }
     toOrmData(guest) {
         return {
@@ -102,8 +126,9 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
             attended: guest.attended,
             eventId: guest.eventId,
             email: guest.email,
-            responsibleId: guest.responsibleId,
+            responsibleId: guest.responsibleId || null,
             isChild: guest.isChild,
+            age: guest.age,
         };
     }
     toDomain(entity) {
@@ -115,8 +140,10 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
             attended: entity.attended,
             eventId: Number(entity.eventId),
             email: entity.email,
-            responsibleId: Number(entity.responsibleId),
+            responsibleId: entity.responsibleId ? Number(entity.responsibleId) : null,
             isChild: entity.isChild,
+            age: entity.age,
+            companionCount: entity.companionCount,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
             deletedAt: entity.deletedAt,

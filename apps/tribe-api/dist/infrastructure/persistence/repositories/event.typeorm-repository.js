@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const event_entity_js_1 = require("../../../domain/entities/event.entity.js");
 const event_typeorm_entity_js_1 = require("../entities/event.typeorm-entity.js");
+const address_entity_js_1 = require("../../../domain/entities/address.entity.js");
 const user_event_typeorm_entity_js_1 = require("../entities/user-event.typeorm-entity.js");
 let EventTypeOrmRepository = class EventTypeOrmRepository {
     ormRepository;
@@ -27,7 +28,10 @@ let EventTypeOrmRepository = class EventTypeOrmRepository {
         this.userEventRepository = userEventRepository;
     }
     async findById(id) {
-        const entity = await this.ormRepository.findOne({ where: { id } });
+        const entity = await this.ormRepository.findOne({
+            where: { id },
+            relations: ['address']
+        });
         return entity ? this.toDomain(entity) : null;
     }
     async findAll(options = { page: 1, limit: 20 }) {
@@ -35,12 +39,14 @@ let EventTypeOrmRepository = class EventTypeOrmRepository {
             skip: (options.page - 1) * options.limit,
             take: options.limit,
             order: { date: 'DESC' },
+            relations: ['address']
         });
         return { data: entities.map((e) => this.toDomain(e)), total };
     }
     async findByUserId(userId, options = { page: 1, limit: 20 }) {
         const qb = this.ormRepository
             .createQueryBuilder('event')
+            .leftJoinAndSelect('event.address', 'address')
             .innerJoin(user_event_typeorm_entity_js_1.UserEventTypeOrmEntity, 'ue', 'ue.fk_event = event.id AND ue.fk_user = :userId', { userId })
             .orderBy('event.date', 'DESC')
             .skip((options.page - 1) * options.limit)
@@ -85,6 +91,19 @@ let EventTypeOrmRepository = class EventTypeOrmRepository {
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
             deletedAt: entity.deletedAt,
+            address: entity.address ? new address_entity_js_1.Address({
+                id: Number(entity.address.id),
+                name: entity.address.name,
+                street: entity.address.street,
+                neighborhood: entity.address.neighborhood,
+                number: entity.address.number,
+                complement: entity.address.complement || '',
+                city: entity.address.city,
+                state: entity.address.state,
+                country: entity.address.country,
+                createdAt: entity.address.createdAt,
+                updatedAt: entity.address.updatedAt,
+            }) : undefined,
         });
     }
 };

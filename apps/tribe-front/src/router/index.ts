@@ -4,22 +4,58 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      name: 'home',
+      component: () => import('../pages/LandingPage.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/restricted-area',
+      name: 'restrictedArea',
+      component: () => import('../pages/RestrictedAreaPage.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/guest-access',
+      name: 'guestAccess',
+      component: () => import('../pages/GuestAccessPage.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/guest-events',
+      name: 'guestEvents',
+      component: () => import('../pages/GuestEventsPage.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/guest-rsvp/:id',
+      name: 'guestRSVP',
+      component: () => import('../pages/GuestRSVPPage.vue'),
+      meta: { public: true },
+    },
+    {
+      path: '/admin/check-in/:id',
+      name: 'staffCheckIn',
+      component: () => import('../pages/StaffCheckInPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../pages/LoginPage.vue'),
       meta: { public: true },
     },
     {
-      path: '/',
+      path: '/admin',
       component: () => import('../layouts/DashboardLayout.vue'),
       children: [
         {
           path: '',
-          name: 'dashboard', // We keep the name dashboard for routing compatibility or rename to events. Let's keep dashboard as it's the root of Layout
+          name: 'dashboard',
           component: () => import('../pages/EventsPage.vue'),
         },
         {
-          path: 'event/:id',
+          path: 'events/:id',
           name: 'eventDashboard',
           component: () => import('../pages/EventDashboardPage.vue'),
         },
@@ -29,6 +65,20 @@ const router = createRouter({
           component: () => import('../pages/UsersPage.vue'),
         },
       ],
+    },
+    {
+      path: '/events/:id',
+      redirect: (to) => {
+        return { name: 'eventDashboard', params: { id: to.params.id } };
+      },
+    },
+    {
+      path: '/events',
+      redirect: { name: 'dashboard' },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'home' },
     },
   ],
 });

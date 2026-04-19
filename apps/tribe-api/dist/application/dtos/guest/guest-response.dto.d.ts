@@ -8,8 +8,10 @@ export declare class GuestResponseDto {
     readonly attended: boolean;
     readonly eventId: number;
     readonly email: string;
-    readonly responsibleId: number;
+    readonly responsibleId: number | null;
     readonly isChild: boolean;
+    readonly companionCount: number;
+    readonly age: number | null;
     readonly createdAt: Date;
     readonly updatedAt: Date | null;
     constructor(guest: Guest);

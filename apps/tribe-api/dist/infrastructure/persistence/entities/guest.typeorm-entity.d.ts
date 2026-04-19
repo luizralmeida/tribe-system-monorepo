@@ -8,9 +8,12 @@ export declare class GuestTypeOrmEntity {
     attended: boolean;
     eventId: number;
     email: string;
-    responsibleId: number;
+    responsibleId: number | null;
     isChild: boolean;
+    age?: number;
     event?: EventTypeOrmEntity;
+    responsible?: GuestTypeOrmEntity;
+    companions?: GuestTypeOrmEntity[];
     createdAt: Date;
     updatedAt: Date | null;
     deletedAt: Date | null;

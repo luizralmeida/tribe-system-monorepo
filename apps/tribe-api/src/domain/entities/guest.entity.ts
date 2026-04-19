@@ -9,8 +9,9 @@ export interface GuestProps {
   attended: boolean;
   eventId: number;
   email: string;
-  responsibleId: number;
+  responsibleId?: number | null;
   isChild: boolean;
+  companionCount?: number;
   // todo: update entity
   age?: number;
   createdAt: Date;
@@ -25,8 +26,10 @@ export class Guest extends BaseEntity {
   readonly attended: boolean;
   readonly eventId: number;
   readonly email: string;
-  readonly responsibleId: number;
+  readonly responsibleId?: number | null;
   readonly isChild: boolean;
+  readonly age?: number;
+  readonly companionCount?: number;
 
   constructor(props: GuestProps) {
     super(props);
@@ -38,6 +41,8 @@ export class Guest extends BaseEntity {
     this.email = props.email;
     this.responsibleId = props.responsibleId;
     this.isChild = props.isChild;
+    this.age = props.age;
+    this.companionCount = props.companionCount;
   }
 
   isConfirmed(): boolean {

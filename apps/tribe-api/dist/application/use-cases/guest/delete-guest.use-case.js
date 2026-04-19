@@ -25,7 +25,7 @@ let DeleteGuestUseCase = class DeleteGuestUseCase {
         if (!guest || guest.eventId !== input.eventId) {
             throw new common_1.NotFoundException('Guest not found in this event');
         }
-        if (!guest.isChild) {
+        if (!guest.responsibleId) {
             await this.guestRepository.softDeleteByResponsibleId(input.id);
         }
         await this.guestRepository.softDelete(input.id);

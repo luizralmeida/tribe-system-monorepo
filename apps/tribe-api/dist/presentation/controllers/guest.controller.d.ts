@@ -5,8 +5,14 @@ import { DeleteGuestUseCase } from '../../application/use-cases/guest/delete-gue
 import { ConfirmGuestUseCase } from '../../application/use-cases/guest/confirm-guest.use-case.js';
 import { UploadGuestsSpreadsheetUseCase } from '../../application/use-cases/guest/upload-guests-spreadsheet.use-case.js';
 import { GetEventDashboardUseCase } from '../../application/use-cases/guest/get-event-dashboard.use-case.js';
+import { GetCompanionsUseCase } from '../../application/use-cases/guest/get-companions.use-case.js';
+import { FindGuestsByPhoneUseCase } from '../../application/use-cases/guest/find-guests-by-phone.use-case.js';
+import { UpdateGuestRSVPUseCase } from '../../application/use-cases/guest/update-guest-rsvp.use-case.js';
+import { CheckInGuestUseCase } from '../../application/use-cases/guest/check-in-guest.use-case.js';
+import { GetGuestByIdUseCase } from '../../application/use-cases/guest/get-guest-by-id.use-case.js';
 import { CreateGuestDto } from '../../application/dtos/guest/create-guest.dto.js';
 import { UpdateGuestDto } from '../../application/dtos/guest/update-guest.dto.js';
+import { UpdateGuestRSVPDto } from '../../application/dtos/guest/update-guest-rsvp.dto.js';
 import { GuestFilterDto } from '../../application/dtos/guest/guest-filter.dto.js';
 interface MulterFile {
     buffer: Buffer;
@@ -21,13 +27,23 @@ export declare class GuestController {
     private readonly confirmGuestUseCase;
     private readonly uploadGuestsSpreadsheetUseCase;
     private readonly getEventDashboardUseCase;
-    constructor(createGuestUseCase: CreateGuestUseCase, findGuestsByEventUseCase: FindGuestsByEventUseCase, updateGuestUseCase: UpdateGuestUseCase, deleteGuestUseCase: DeleteGuestUseCase, confirmGuestUseCase: ConfirmGuestUseCase, uploadGuestsSpreadsheetUseCase: UploadGuestsSpreadsheetUseCase, getEventDashboardUseCase: GetEventDashboardUseCase);
-    findByEvent(eventId: number, filters: GuestFilterDto): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>>;
+    private readonly getCompanionsUseCase;
+    private readonly findGuestsByPhoneUseCase;
+    private readonly updateGuestRSVPUseCase;
+    private readonly checkInGuestUseCase;
+    private readonly getGuestByIdUseCase;
+    constructor(createGuestUseCase: CreateGuestUseCase, findGuestsByEventUseCase: FindGuestsByEventUseCase, updateGuestUseCase: UpdateGuestUseCase, deleteGuestUseCase: DeleteGuestUseCase, confirmGuestUseCase: ConfirmGuestUseCase, uploadGuestsSpreadsheetUseCase: UploadGuestsSpreadsheetUseCase, getEventDashboardUseCase: GetEventDashboardUseCase, getCompanionsUseCase: GetCompanionsUseCase, findGuestsByPhoneUseCase: FindGuestsByPhoneUseCase, updateGuestRSVPUseCase: UpdateGuestRSVPUseCase, checkInGuestUseCase: CheckInGuestUseCase, getGuestByIdUseCase: GetGuestByIdUseCase);
+    findByEvent(eventId: number, query: GuestFilterDto): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>>;
     getDashboard(eventId: number): Promise<import("../../application/dtos/guest/dashboard-response.dto.js").DashboardResponseDto>;
+    getCompanions(eventId: number, id: number): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto[]>;
     create(eventId: number, dto: CreateGuestDto): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>;
     upload(eventId: number, file: MulterFile): Promise<import("../../application/use-cases/guest/upload-guests-spreadsheet.use-case.js").UploadOutput>;
     update(eventId: number, id: number, dto: UpdateGuestDto): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>;
     delete(eventId: number, id: number): Promise<void>;
     confirm(token: string): Promise<import("../../application/use-cases/guest/confirm-guest.use-case.js").ConfirmGuestOutput>;
+    findByPhone(phone: string): Promise<import("../../application/dtos/guest/guest-event-response.dto.js").GuestEventResponseDto[]>;
+    updateStatus(id: number, dto: UpdateGuestRSVPDto): Promise<import("../../application/use-cases/guest/update-guest-rsvp.use-case.js").UpdateGuestRSVPOutput>;
+    checkIn(id: number): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>;
+    getById(id: number): Promise<import("../../application/dtos/guest/guest-event-response.dto.js").GuestEventResponseDto>;
 }
 export {};

@@ -6,11 +6,13 @@ class DashboardResponseDto {
     confirmed;
     notConfirmed;
     attended;
+    nonPayingChildrenCount;
     constructor(props) {
         this.total = props.total;
         this.confirmed = props.confirmed;
         this.notConfirmed = props.notConfirmed;
         this.attended = props.attended;
+        this.nonPayingChildrenCount = props.nonPayingChildrenCount;
     }
 }
 exports.DashboardResponseDto = DashboardResponseDto;

@@ -27,6 +27,15 @@ export class UpdateGuestUseCase
     }
 
     const updated = await this.guestRepository.update(input.id, input.data);
+
+    // Cascade update to dependents if email or phone changed
+    if (!guest.responsibleId && (input.data.email || input.data.phone)) {
+      await this.guestRepository.updateDependentsContact(input.id, {
+        email: input.data.email,
+        phone: input.data.phone,
+      });
+    }
+
     return GuestResponseDto.fromDomain(updated);
   }
 }

@@ -14,11 +14,12 @@ const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const guest_status_enum_js_1 = require("../../../domain/enums/guest-status.enum.js");
 const pagination_dto_js_1 = require("../pagination.dto.js");
-class GuestFilterDto extends pagination_dto_js_1.PaginationQueryDto {
+class GuestFilterDto extends pagination_dto_js_1.PaginationWithFilterQueryDto {
     status;
     name;
     isChild;
     attended;
+    onlyPrimary;
 }
 exports.GuestFilterDto = GuestFilterDto;
 __decorate([
@@ -43,4 +44,10 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], GuestFilterDto.prototype, "attended", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Boolean),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], GuestFilterDto.prototype, "onlyPrimary", void 0);
 //# sourceMappingURL=guest-filter.dto.js.map

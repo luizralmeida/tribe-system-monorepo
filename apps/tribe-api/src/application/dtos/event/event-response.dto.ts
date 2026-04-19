@@ -1,10 +1,12 @@
 import { Event } from '../../../domain/entities/event.entity.js';
+import { AddressResponseDto } from '../address/address-response.dto.js';
 
 export class EventResponseDto {
   readonly id: number;
   readonly name: string | null;
   readonly addressId: number;
   readonly date: Date;
+  readonly address?: AddressResponseDto;
   readonly createdAt: Date;
   readonly updatedAt: Date | null;
 
@@ -15,6 +17,9 @@ export class EventResponseDto {
     this.date = event.date;
     this.createdAt = event.createdAt;
     this.updatedAt = event.updatedAt;
+    if (event.address) {
+      this.address = AddressResponseDto.fromDomain(event.address);
+    }
   }
 
   static fromDomain(event: Event): EventResponseDto {

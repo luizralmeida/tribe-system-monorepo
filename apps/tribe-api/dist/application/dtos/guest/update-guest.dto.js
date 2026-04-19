@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateGuestDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 const guest_status_enum_js_1 = require("../../../domain/enums/guest-status.enum.js");
 class UpdateGuestDto {
     name;
@@ -19,6 +20,8 @@ class UpdateGuestDto {
     status;
     attended;
     isChild;
+    age;
+    responsibleId;
 }
 exports.UpdateGuestDto = UpdateGuestDto;
 __decorate([
@@ -55,4 +58,16 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateGuestDto.prototype, "isChild", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], UpdateGuestDto.prototype, "age", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], UpdateGuestDto.prototype, "responsibleId", void 0);
 //# sourceMappingURL=update-guest.dto.js.map

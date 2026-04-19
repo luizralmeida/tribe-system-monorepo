@@ -22,9 +22,16 @@ import { DeleteGuestUseCase } from '../../application/use-cases/guest/delete-gue
 import { ConfirmGuestUseCase } from '../../application/use-cases/guest/confirm-guest.use-case.js';
 import { UploadGuestsSpreadsheetUseCase } from '../../application/use-cases/guest/upload-guests-spreadsheet.use-case.js';
 import { GetEventDashboardUseCase } from '../../application/use-cases/guest/get-event-dashboard.use-case.js';
+import { GetCompanionsUseCase } from '../../application/use-cases/guest/get-companions.use-case.js';
+import { FindGuestsByPhoneUseCase } from '../../application/use-cases/guest/find-guests-by-phone.use-case.js';
+import { UpdateGuestRSVPUseCase } from '../../application/use-cases/guest/update-guest-rsvp.use-case.js';
+import { CheckInGuestUseCase } from '../../application/use-cases/guest/check-in-guest.use-case.js';
+import { GetGuestByIdUseCase } from '../../application/use-cases/guest/get-guest-by-id.use-case.js';
 import { CreateGuestDto } from '../../application/dtos/guest/create-guest.dto.js';
 import { UpdateGuestDto } from '../../application/dtos/guest/update-guest.dto.js';
+import { UpdateGuestRSVPDto } from '../../application/dtos/guest/update-guest-rsvp.dto.js';
 import { GuestFilterDto } from '../../application/dtos/guest/guest-filter.dto.js';
+import { PaginationWithFilterQueryDto } from '../../application/dtos/pagination.dto.js';
 
 interface MulterFile {
   buffer: Buffer;
@@ -42,21 +49,35 @@ export class GuestController {
     private readonly confirmGuestUseCase: ConfirmGuestUseCase,
     private readonly uploadGuestsSpreadsheetUseCase: UploadGuestsSpreadsheetUseCase,
     private readonly getEventDashboardUseCase: GetEventDashboardUseCase,
+    private readonly getCompanionsUseCase: GetCompanionsUseCase,
+    private readonly findGuestsByPhoneUseCase: FindGuestsByPhoneUseCase,
+    private readonly updateGuestRSVPUseCase: UpdateGuestRSVPUseCase,
+    private readonly checkInGuestUseCase: CheckInGuestUseCase,
+    private readonly getGuestByIdUseCase: GetGuestByIdUseCase,
   ) {}
 
   @Get('events/:eventId/guests')
   @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
   async findByEvent(
     @Param('eventId', ParseIntPipe) eventId: number,
-    @Query() filters: GuestFilterDto,
+    @Query() query: GuestFilterDto,
   ) {
-    return this.findGuestsByEventUseCase.execute({ ...filters, eventId });
+    return this.findGuestsByEventUseCase.execute({ query, eventId });
   }
 
   @Get('events/:eventId/guests/dashboard')
   @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
   async getDashboard(@Param('eventId', ParseIntPipe) eventId: number) {
     return this.getEventDashboardUseCase.execute(eventId);
+  }
+
+  @Get('events/:eventId/guests/:id/companions')
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  async getCompanions(
+    @Param('eventId', ParseIntPipe) eventId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.getCompanionsUseCase.execute({ eventId, id });
   }
 
   @Post('events/:eventId/guests')
@@ -104,5 +125,32 @@ export class GuestController {
   @Post('guests/confirm/:token')
   async confirm(@Param('token') token: string) {
     return this.confirmGuestUseCase.execute({ token });
+  }
+
+  @Public()
+  @Get('guests/by-phone/:phone')
+  async findByPhone(@Param('phone') phone: string) {
+    return this.findGuestsByPhoneUseCase.execute({ phone });
+  }
+
+  @Public()
+  @Put('guests/:id/status')
+  async updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateGuestRSVPDto,
+  ) {
+    return this.updateGuestRSVPUseCase.execute({ id, status: dto.status });
+  }
+
+  @Put('guests/:id/check-in')
+  @Roles(UserRole.SUPER, UserRole.EDIT)
+  async checkIn(@Param('id', ParseIntPipe) id: number) {
+    return this.checkInGuestUseCase.execute({ id });
+  }
+
+  @Get('guests/:id')
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return this.getGuestByIdUseCase.execute({ id });
   }
 }

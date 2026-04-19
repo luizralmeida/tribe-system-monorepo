@@ -6,6 +6,7 @@ export declare class GuestTypeOrmRepository implements IGuestRepository {
     private readonly ormRepository;
     constructor(ormRepository: Repository<GuestTypeOrmEntity>);
     findById(id: number): Promise<Guest | null>;
+    findByPhone(phone: string): Promise<Guest[]>;
     findByEventId(filters: GuestFilters): Promise<{
         data: Guest[];
         total: number;
@@ -16,6 +17,10 @@ export declare class GuestTypeOrmRepository implements IGuestRepository {
     update(id: number, data: UpdateGuestData): Promise<Guest>;
     softDelete(id: number): Promise<void>;
     softDeleteByResponsibleId(responsibleId: number): Promise<void>;
+    updateDependentsContact(responsibleId: number, data: {
+        email?: string;
+        phone?: string;
+    }): Promise<void>;
     getDashboard(eventId: number): Promise<GuestDashboard>;
     private applyFilters;
     private toOrmData;

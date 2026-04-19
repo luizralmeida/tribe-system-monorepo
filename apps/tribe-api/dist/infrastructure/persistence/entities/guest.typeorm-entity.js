@@ -23,7 +23,10 @@ let GuestTypeOrmEntity = class GuestTypeOrmEntity {
     email;
     responsibleId;
     isChild;
+    age;
     event;
+    responsible;
+    companions;
     createdAt;
     updatedAt;
     deletedAt;
@@ -58,18 +61,31 @@ __decorate([
     __metadata("design:type", String)
 ], GuestTypeOrmEntity.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'fk_responsible', type: 'bigint', unsigned: true }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.Column)({ name: 'fk_responsible', type: 'bigint', unsigned: true, nullable: true }),
+    __metadata("design:type", Object)
 ], GuestTypeOrmEntity.prototype, "responsibleId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'is_child', type: 'boolean' }),
     __metadata("design:type", Boolean)
 ], GuestTypeOrmEntity.prototype, "isChild", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Number)
+], GuestTypeOrmEntity.prototype, "age", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => event_typeorm_entity_js_1.EventTypeOrmEntity, { eager: false }),
     (0, typeorm_1.JoinColumn)({ name: 'fk_event' }),
     __metadata("design:type", event_typeorm_entity_js_1.EventTypeOrmEntity)
 ], GuestTypeOrmEntity.prototype, "event", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => GuestTypeOrmEntity, (guest) => guest.companions, { eager: false, nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'fk_responsible' }),
+    __metadata("design:type", GuestTypeOrmEntity)
+], GuestTypeOrmEntity.prototype, "responsible", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => GuestTypeOrmEntity, (guest) => guest.responsible),
+    __metadata("design:type", Array)
+], GuestTypeOrmEntity.prototype, "companions", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at', type: 'timestamp' }),
     __metadata("design:type", Date)

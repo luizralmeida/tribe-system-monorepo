@@ -7,6 +7,7 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { GuestStatus } from '../../../domain/enums/guest-status.enum.js';
 import { EventTypeOrmEntity } from './event.typeorm-entity.js';
@@ -34,15 +35,25 @@ export class GuestTypeOrmEntity {
   @Column({ type: 'varchar', length: 255 })
   email!: string;
 
-  @Column({ name: 'fk_responsible', type: 'bigint', unsigned: true })
-  responsibleId!: number;
+  @Column({ name: 'fk_responsible', type: 'bigint', unsigned: true, nullable: true })
+  responsibleId!: number | null;
 
   @Column({ name: 'is_child', type: 'boolean' })
   isChild!: boolean;
 
+  @Column({ type: 'int', nullable: true })
+  age?: number;
+
   @ManyToOne(() => EventTypeOrmEntity, { eager: false })
   @JoinColumn({ name: 'fk_event' })
   event?: EventTypeOrmEntity;
+
+  @ManyToOne(() => GuestTypeOrmEntity, (guest) => guest.companions, { eager: false, nullable: true })
+  @JoinColumn({ name: 'fk_responsible' })
+  responsible?: GuestTypeOrmEntity;
+
+  @OneToMany(() => GuestTypeOrmEntity, (guest) => guest.responsible)
+  companions?: GuestTypeOrmEntity[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;

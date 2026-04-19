@@ -10,6 +10,7 @@ export interface Guest {
   email: string;
   responsibleId: number;
   isChild: boolean;
+  companionCount: number;
   age?: number;
   createdAt: string;
   updatedAt: string | null;

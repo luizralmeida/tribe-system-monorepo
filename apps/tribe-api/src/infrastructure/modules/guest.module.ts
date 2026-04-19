@@ -12,12 +12,19 @@ import { DeleteGuestUseCase } from '../../application/use-cases/guest/delete-gue
 import { ConfirmGuestUseCase } from '../../application/use-cases/guest/confirm-guest.use-case.js';
 import { UploadGuestsSpreadsheetUseCase } from '../../application/use-cases/guest/upload-guests-spreadsheet.use-case.js';
 import { GetEventDashboardUseCase } from '../../application/use-cases/guest/get-event-dashboard.use-case.js';
+import { GetCompanionsUseCase } from '../../application/use-cases/guest/get-companions.use-case.js';
 import { SpreadsheetParserService } from '../../application/services/spreadsheet-parser.service.js';
 import { GuestController } from '../../presentation/controllers/guest.controller.js';
+import { EventModule } from './event.module.js';
+import { FindGuestsByPhoneUseCase } from '../../application/use-cases/guest/find-guests-by-phone.use-case.js';
+import { UpdateGuestRSVPUseCase } from '../../application/use-cases/guest/update-guest-rsvp.use-case.js';
+import { CheckInGuestUseCase } from '../../application/use-cases/guest/check-in-guest.use-case.js';
+import { GetGuestByIdUseCase } from '../../application/use-cases/guest/get-guest-by-id.use-case.js';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([GuestTypeOrmEntity]),
+    EventModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,6 +46,11 @@ import { GuestController } from '../../presentation/controllers/guest.controller
     ConfirmGuestUseCase,
     UploadGuestsSpreadsheetUseCase,
     GetEventDashboardUseCase,
+    GetCompanionsUseCase,
+    FindGuestsByPhoneUseCase,
+    UpdateGuestRSVPUseCase,
+    CheckInGuestUseCase,
+    GetGuestByIdUseCase,
     SpreadsheetParserService,
   ],
   exports: [GUEST_REPOSITORY],

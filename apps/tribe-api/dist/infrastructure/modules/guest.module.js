@@ -21,8 +21,14 @@ const delete_guest_use_case_js_1 = require("../../application/use-cases/guest/de
 const confirm_guest_use_case_js_1 = require("../../application/use-cases/guest/confirm-guest.use-case.js");
 const upload_guests_spreadsheet_use_case_js_1 = require("../../application/use-cases/guest/upload-guests-spreadsheet.use-case.js");
 const get_event_dashboard_use_case_js_1 = require("../../application/use-cases/guest/get-event-dashboard.use-case.js");
+const get_companions_use_case_js_1 = require("../../application/use-cases/guest/get-companions.use-case.js");
 const spreadsheet_parser_service_js_1 = require("../../application/services/spreadsheet-parser.service.js");
 const guest_controller_js_1 = require("../../presentation/controllers/guest.controller.js");
+const event_module_js_1 = require("./event.module.js");
+const find_guests_by_phone_use_case_js_1 = require("../../application/use-cases/guest/find-guests-by-phone.use-case.js");
+const update_guest_rsvp_use_case_js_1 = require("../../application/use-cases/guest/update-guest-rsvp.use-case.js");
+const check_in_guest_use_case_js_1 = require("../../application/use-cases/guest/check-in-guest.use-case.js");
+const get_guest_by_id_use_case_js_1 = require("../../application/use-cases/guest/get-guest-by-id.use-case.js");
 let GuestModule = class GuestModule {
 };
 exports.GuestModule = GuestModule;
@@ -30,6 +36,7 @@ exports.GuestModule = GuestModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([guest_typeorm_entity_js_1.GuestTypeOrmEntity]),
+            event_module_js_1.EventModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -51,6 +58,11 @@ exports.GuestModule = GuestModule = __decorate([
             confirm_guest_use_case_js_1.ConfirmGuestUseCase,
             upload_guests_spreadsheet_use_case_js_1.UploadGuestsSpreadsheetUseCase,
             get_event_dashboard_use_case_js_1.GetEventDashboardUseCase,
+            get_companions_use_case_js_1.GetCompanionsUseCase,
+            find_guests_by_phone_use_case_js_1.FindGuestsByPhoneUseCase,
+            update_guest_rsvp_use_case_js_1.UpdateGuestRSVPUseCase,
+            check_in_guest_use_case_js_1.CheckInGuestUseCase,
+            get_guest_by_id_use_case_js_1.GetGuestByIdUseCase,
             spreadsheet_parser_service_js_1.SpreadsheetParserService,
         ],
         exports: [guest_repository_interface_js_1.GUEST_REPOSITORY],

@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import type { IEventRepository, CreateEventData, UpdateEventData } from '../../../domain/repositories/event.repository.interface.js';
 import { Event } from '../../../domain/entities/event.entity.js';
 import { EventTypeOrmEntity } from '../entities/event.typeorm-entity.js';
+import { AddressTypeOrmEntity } from '../entities/address.typeorm-entity.js';
+import { Address } from '../../../domain/entities/address.entity.js';
 import { UserEventTypeOrmEntity } from '../entities/user-event.typeorm-entity.js';
 
 @Injectable()
@@ -16,7 +18,10 @@ export class EventTypeOrmRepository implements IEventRepository {
   ) {}
 
   async findById(id: number): Promise<Event | null> {
-    const entity = await this.ormRepository.findOne({ where: { id } });
+    const entity = await this.ormRepository.findOne({ 
+      where: { id },
+      relations: ['address']
+    });
     return entity ? this.toDomain(entity) : null;
   }
 
@@ -27,6 +32,7 @@ export class EventTypeOrmRepository implements IEventRepository {
       skip: (options.page - 1) * options.limit,
       take: options.limit,
       order: { date: 'DESC' },
+      relations: ['address']
     });
     return { data: entities.map((e) => this.toDomain(e)), total };
   }
@@ -37,6 +43,7 @@ export class EventTypeOrmRepository implements IEventRepository {
   ): Promise<{ data: Event[]; total: number }> {
     const qb = this.ormRepository
       .createQueryBuilder('event')
+      .leftJoinAndSelect('event.address', 'address')
       .innerJoin(
         UserEventTypeOrmEntity,
         'ue',
@@ -92,6 +99,19 @@ export class EventTypeOrmRepository implements IEventRepository {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       deletedAt: entity.deletedAt,
+      address: entity.address ? new Address({
+        id: Number(entity.address.id),
+        name: entity.address.name,
+        street: entity.address.street,
+        neighborhood: entity.address.neighborhood,
+        number: entity.address.number,
+        complement: entity.address.complement || '',
+        city: entity.address.city,
+        state: entity.address.state,
+        country: entity.address.country,
+        createdAt: entity.address.createdAt,
+        updatedAt: entity.address.updatedAt,
+      }) : undefined,
     });
   }
 }

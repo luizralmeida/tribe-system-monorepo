@@ -20,12 +20,6 @@ export class CreateGuestUseCase
   ) {}
 
   async execute(input: CreateGuestInput): Promise<GuestResponseDto> {
-    if (input.data.isChild && !input.data.responsibleId) {
-      throw new BadRequestException(
-        'responsibleId is required when isChild is true',
-      );
-    }
-
     if (input.data.isChild) {
       await this.validateResponsible(input.data.responsibleId!, input.eventId);
     }
@@ -39,6 +33,7 @@ export class CreateGuestUseCase
       eventId: input.eventId,
       responsibleId: input.data.responsibleId ?? 0,
       isChild: input.data.isChild,
+      age: input.data.age,
     });
 
     return GuestResponseDto.fromDomain(guest);

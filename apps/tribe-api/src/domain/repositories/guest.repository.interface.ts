@@ -9,6 +9,7 @@ export interface GuestFilters {
   attended?: boolean;
   page: number;
   limit: number;
+  onlyPrimary?: boolean;
 }
 
 export interface GuestDashboard {
@@ -16,6 +17,7 @@ export interface GuestDashboard {
   confirmed: number;
   notConfirmed: number;
   attended: number;
+  nonPayingChildrenCount: number;
 }
 
 export interface CreateGuestData {
@@ -27,6 +29,7 @@ export interface CreateGuestData {
   eventId: number;
   responsibleId: number;
   isChild: boolean;
+  age?: number;
 }
 
 export interface UpdateGuestData {
@@ -36,10 +39,13 @@ export interface UpdateGuestData {
   status?: GuestStatus;
   attended?: boolean;
   isChild?: boolean;
+  age?: number;
+  responsibleId?: number;
 }
 
 export interface IGuestRepository {
   findById(id: number): Promise<Guest | null>;
+  findByPhone(phone: string): Promise<Guest[]>;
   findByEventId(filters: GuestFilters): Promise<{ data: Guest[]; total: number }>;
   findDependents(responsibleId: number): Promise<Guest[]>;
   save(guest: CreateGuestData): Promise<Guest>;
@@ -47,6 +53,7 @@ export interface IGuestRepository {
   update(id: number, data: UpdateGuestData): Promise<Guest>;
   softDelete(id: number): Promise<void>;
   softDeleteByResponsibleId(responsibleId: number): Promise<void>;
+  updateDependentsContact(responsibleId: number, data: { email?: string; phone?: string }): Promise<void>;
   getDashboard(eventId: number): Promise<GuestDashboard>;
 }
 

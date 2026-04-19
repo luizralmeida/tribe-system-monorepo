@@ -6,4 +6,6 @@ export declare class UpdateGuestDto {
     status?: GuestStatus;
     attended?: boolean;
     isChild?: boolean;
+    age?: number;
+    responsibleId?: number;
 }

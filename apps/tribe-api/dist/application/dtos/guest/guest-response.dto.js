@@ -11,6 +11,8 @@ class GuestResponseDto {
     email;
     responsibleId;
     isChild;
+    companionCount;
+    age;
     createdAt;
     updatedAt;
     constructor(guest) {
@@ -21,8 +23,10 @@ class GuestResponseDto {
         this.attended = guest.attended;
         this.eventId = guest.eventId;
         this.email = guest.email;
-        this.responsibleId = guest.responsibleId;
+        this.responsibleId = guest.responsibleId || null;
         this.isChild = guest.isChild;
+        this.companionCount = guest.companionCount || 0;
+        this.age = guest.age || null;
         this.createdAt = guest.createdAt;
         this.updatedAt = guest.updatedAt;
     }

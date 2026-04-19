@@ -21,7 +21,7 @@ export class DeleteGuestUseCase implements IUseCase<DeleteGuestInput, void> {
       throw new NotFoundException('Guest not found in this event');
     }
 
-    if (!guest.isChild) {
+    if (!guest.responsibleId) {
       await this.guestRepository.softDeleteByResponsibleId(input.id);
     }
 

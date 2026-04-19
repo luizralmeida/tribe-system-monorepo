@@ -38,4 +38,9 @@ export class CreateGuestDto {
   @IsNumber()
   @Type(() => Number)
   responsibleId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  age?: number;
 }

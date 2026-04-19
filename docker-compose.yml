@@ -22,7 +22,7 @@ services:
     depends_on:
       - tribe-db
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "80:80"

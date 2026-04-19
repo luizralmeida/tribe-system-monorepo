@@ -15,10 +15,8 @@ services:
     container_name: tribe-api
     ports:
       - "3000:3000"
-    environment:
-      - DATABASE_HOST=tribe-db # O Nest deve usar o nome do serviço como Host
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD=9Jhx6UU|*@4u4*7N~@6dnYLZ/TeR[acy[Z"
+    env_file:
+      - ./apps/tribe-api/.env  # <-- Adicione este caminho exato
     depends_on:
       - tribe-db
 

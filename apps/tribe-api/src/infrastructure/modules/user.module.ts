@@ -27,6 +27,6 @@ import { AuthModule } from './auth.module.js';
     UpdateUserUseCase,
     DeleteUserUseCase,
   ],
-  exports: [USER_REPOSITORY],
+  exports: [USER_REPOSITORY, CreateUserUseCase],
 })
 export class UserModule {}

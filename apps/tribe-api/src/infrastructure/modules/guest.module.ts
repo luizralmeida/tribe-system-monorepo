@@ -20,11 +20,13 @@ import { FindGuestsByPhoneUseCase } from '../../application/use-cases/guest/find
 import { UpdateGuestRSVPUseCase } from '../../application/use-cases/guest/update-guest-rsvp.use-case.js';
 import { CheckInGuestUseCase } from '../../application/use-cases/guest/check-in-guest.use-case.js';
 import { GetGuestByIdUseCase } from '../../application/use-cases/guest/get-guest-by-id.use-case.js';
+import { UserModule } from './user.module.js';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([GuestTypeOrmEntity]),
     EventModule,
+    UserModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

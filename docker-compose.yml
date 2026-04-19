@@ -22,7 +22,11 @@ services:
     depends_on:
       - tribe-db
 
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "80:80"
+  tribe-front:
+    build:
+      context: ./apps/tribe-front
+    container_name: tribe-front
+    ports:
+      - "80:80" # Mapeia a porta 80 da VPS para a porta 80 do container
+    depends_on:
+      - tribe-api

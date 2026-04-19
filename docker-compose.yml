@@ -1,22 +1,28 @@
 services:
-  tribe-mysql:
+  tribe-db:
     image: mysql:8.0
-    container_name: tribe-mysql
-    ports:
-      - '3306:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: tribe_root_pass
+      MYSQL_ROOT_PASSWORD: 9Jhx6UU|*@4u4*7N~@6dnYLZ/TeR[acy[Z"
       MYSQL_DATABASE: tribe_db
       MYSQL_USER: tribe_user
-      MYSQL_PASSWORD: tribe_pass
+      MYSQL_PASSWORD: siT&3p4;4,\7<.IbF=r0wMwVML<Y0>~s&Ps
     volumes:
-      - tribe_mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - mysql_data:/var/lib/mysql
 
-volumes:
-  tribe_mysql_data:
-    driver: local
+  tribe-api:
+    build: 
+      context: ./apps/tribe-api # O Docker "entra" nesta pasta para buildar
+    container_name: tribe-api
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_HOST=tribe-db # O Nest deve usar o nome do serviço como Host
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=9Jhx6UU|*@4u4*7N~@6dnYLZ/TeR[acy[Z"
+    depends_on:
+      - tribe-db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"

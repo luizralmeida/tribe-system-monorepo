@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(credentials: any) {
       try {
-        const { data } = await api.post('/auth/login', credentials);
+        const { data } = await api.post('auth/login', credentials);
         this.token = data.accessToken;
         this.user = data.user;
         localStorage.setItem('token', data.accessToken);
@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
     async fetchProfile() {
       if (!this.token) return;
       try {
-        const { data } = await api.get('/auth/profile');
+        const { data } = await api.get('auth/profile');
         this.user = data;
       } catch (error) {
         this.logout();

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { X, Users, Baby, User, CheckCircle2, XCircle, Trash2 } from 'lucide-vue-next';
+import { X, Users, Baby, User, CheckCircle2, XCircle, Trash2, QrCode } from 'lucide-vue-next';
 import { guestService } from '../services/guest.service';
+import ConfirmationModal from './ConfirmationModal.vue';
+import QRCodeModal from './QRCodeModal.vue';
 import type { Guest } from '../types';
 import { GuestStatus } from '../types';
 
@@ -17,6 +19,17 @@ const companions = ref<Guest[]>([]);
 const isLoading = ref(true);
 const error = ref('');
 
+// Confirmation Modal State
+const showConfirmModal = ref(false);
+const confirmTitle = ref('');
+const confirmMessage = ref('');
+const confirmType = ref<'danger' | 'warning' | 'info'>('warning');
+let onConfirmCallback: (() => Promise<void>) | null = null;
+
+// QR Code Modal State
+const showQRCodeModal = ref(false);
+const qrCodeGuestId = ref<number | null>(null);
+
 const fetchData = async () => {
   try {
     companions.value = await guestService.getCompanions(props.eventId, props.guest.id);
@@ -28,28 +41,55 @@ const fetchData = async () => {
   }
 };
 
-const toggleStatus = async (comp: Guest) => {
+const toggleStatus = (comp: Guest) => {
   const statuses = [GuestStatus.NOT_CONFIRMED, GuestStatus.CONFIRMED, GuestStatus.NOT_COMING];
   const currentIndex = statuses.indexOf(comp.status);
   const nextStatus = statuses[(currentIndex + 1) % statuses.length];
-  
-  try {
-    await guestService.update(props.eventId, comp.id, { status: nextStatus });
-    await fetchData();
-    emit('refresh');
-  } catch (err) {
-    console.error('Failed to toggle companion status', err);
-  }
+  const statusLabel = nextStatus === GuestStatus.CONFIRMED ? 'Confirmado' : nextStatus === GuestStatus.NOT_COMING ? 'Não vai' : 'Pendente';
+
+  confirmTitle.value = 'Alterar Status';
+  confirmMessage.value = `Deseja alterar o status de ${comp.name} para "${statusLabel}"?`;
+  confirmType.value = 'warning';
+  onConfirmCallback = async () => {
+    try {
+      await guestService.update(props.eventId, comp.id, { status: nextStatus });
+      await fetchData();
+      emit('refresh');
+    } catch (err) {
+      console.error('Failed to toggle companion status', err);
+    }
+  };
+  showConfirmModal.value = true;
 };
 
-const toggleCheckIn = async (comp: Guest) => {
-  try {
-    await guestService.update(props.eventId, comp.id, { attended: !comp.attended });
-    await fetchData();
-    emit('refresh');
-  } catch (err) {
-    console.error('Failed to toggle companion check-in', err);
+const toggleCheckIn = (comp: Guest) => {
+  const nextAttended = !comp.attended;
+  confirmTitle.value = nextAttended ? 'Realizar Check-in' : 'Remover Check-in';
+  confirmMessage.value = `Deseja ${nextAttended ? 'confirmar a presença' : 'remover a presença'} de ${comp.name}?`;
+  confirmType.value = nextAttended ? 'info' : 'danger';
+  onConfirmCallback = async () => {
+    try {
+      await guestService.update(props.eventId, comp.id, { attended: nextAttended });
+      await fetchData();
+      emit('refresh');
+    } catch (err) {
+      console.error('Failed to toggle companion check-in', err);
+    }
+  };
+  showConfirmModal.value = true;
+};
+
+const handleConfirm = async () => {
+  if (onConfirmCallback) {
+    await onConfirmCallback();
   }
+  showConfirmModal.value = false;
+  onConfirmCallback = null;
+};
+
+const openQRCodeModal = (comp: Guest) => {
+  qrCodeGuestId.value = comp.id;
+  showQRCodeModal.value = true;
 };
 
 const handleDeleteCompanion = async (comp: Guest) => {
@@ -135,6 +175,15 @@ onMounted(() => {
 
             <div class="flex items-center gap-2">
               <button 
+                v-if="comp.status === GuestStatus.CONFIRMED"
+                @click="openQRCodeModal(comp)"
+                class="p-2 text-slate-400 hover:text-emerald-500 transition-colors"
+                title="Ver QR Code"
+              >
+                <QrCode class="w-4 h-4" />
+              </button>
+
+              <button 
                 @click="toggleCheckIn(comp)"
                 :class="[
                   'p-2 rounded-xl transition-all',
@@ -168,6 +217,22 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Modals -->
+    <ConfirmationModal
+      v-if="showConfirmModal"
+      :title="confirmTitle"
+      :message="confirmMessage"
+      :type="confirmType"
+      @confirm="handleConfirm"
+      @cancel="showConfirmModal = false"
+    />
+
+    <QRCodeModal
+      v-if="showQRCodeModal && qrCodeGuestId"
+      :guest-id="qrCodeGuestId"
+      @close="showQRCodeModal = false; qrCodeGuestId = null"
+    />
   </div>
 </template>
 

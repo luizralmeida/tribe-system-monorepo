@@ -14,10 +14,11 @@ export class GuestResponseDto {
   readonly companionCount: number;
   readonly companions: GuestResponseDto[];
   readonly age: number | null;
+  readonly qrCode?: string;
   readonly createdAt: Date;
   readonly updatedAt: Date | null;
 
-  constructor(guest: Guest, companions?: Guest[]) {
+  constructor(guest: Guest, companions?: Guest[], qrCode?: string) {
     this.id = guest.id;
     this.name = guest.name;
     this.phone = guest.phone;
@@ -29,6 +30,7 @@ export class GuestResponseDto {
     this.isChild = guest.isChild;
     this.companionCount = companions?.length || 0;
     this.age = guest.age || null;
+    this.qrCode = qrCode;
     this.createdAt = guest.createdAt;
     this.updatedAt = guest.updatedAt;
     this.companions = companions?.map((c) => new GuestResponseDto(c, [])) || [];

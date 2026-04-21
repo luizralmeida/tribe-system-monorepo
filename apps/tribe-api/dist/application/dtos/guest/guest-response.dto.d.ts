@@ -13,8 +13,9 @@ export declare class GuestResponseDto {
     readonly companionCount: number;
     readonly companions: GuestResponseDto[];
     readonly age: number | null;
+    readonly qrCode?: string;
     readonly createdAt: Date;
     readonly updatedAt: Date | null;
-    constructor(guest: Guest, companions?: Guest[]);
+    constructor(guest: Guest, companions?: Guest[], qrCode?: string);
     static fromDomain(guest: Guest): GuestResponseDto;
 }

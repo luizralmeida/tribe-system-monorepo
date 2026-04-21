@@ -12,6 +12,7 @@ export interface Guest {
   isChild: boolean;
   companionCount: number;
   companions?: Guest[];
+  qrCode?: string;
   age?: number;
   createdAt: string;
   updatedAt: string | null;

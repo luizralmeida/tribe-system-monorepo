@@ -14,9 +14,10 @@ class GuestResponseDto {
     companionCount;
     companions;
     age;
+    qrCode;
     createdAt;
     updatedAt;
-    constructor(guest, companions) {
+    constructor(guest, companions, qrCode) {
         this.id = guest.id;
         this.name = guest.name;
         this.phone = guest.phone;
@@ -28,6 +29,7 @@ class GuestResponseDto {
         this.isChild = guest.isChild;
         this.companionCount = companions?.length || 0;
         this.age = guest.age || null;
+        this.qrCode = qrCode;
         this.createdAt = guest.createdAt;
         this.updatedAt = guest.updatedAt;
         this.companions = companions?.map((c) => new GuestResponseDto(c, [])) || [];

@@ -11,7 +11,6 @@ import { UserModule } from './user.module.js';
 import { AddressModule } from './address.module.js';
 import { EventModule } from './event.module.js';
 import { GuestModule } from './guest.module.js';
-
 @Module({
   imports: [
     ConfigModule.forRoot({

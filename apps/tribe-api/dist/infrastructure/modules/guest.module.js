@@ -29,6 +29,7 @@ const find_guests_by_phone_use_case_js_1 = require("../../application/use-cases/
 const update_guest_rsvp_use_case_js_1 = require("../../application/use-cases/guest/update-guest-rsvp.use-case.js");
 const check_in_guest_use_case_js_1 = require("../../application/use-cases/guest/check-in-guest.use-case.js");
 const get_guest_by_id_use_case_js_1 = require("../../application/use-cases/guest/get-guest-by-id.use-case.js");
+const user_module_js_1 = require("./user.module.js");
 let GuestModule = class GuestModule {
 };
 exports.GuestModule = GuestModule;
@@ -37,6 +38,7 @@ exports.GuestModule = GuestModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([guest_typeorm_entity_js_1.GuestTypeOrmEntity]),
             event_module_js_1.EventModule,
+            user_module_js_1.UserModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],

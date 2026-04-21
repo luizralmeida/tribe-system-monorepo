@@ -39,7 +39,7 @@ exports.UserModule = UserModule = __decorate([
             update_user_use_case_js_1.UpdateUserUseCase,
             delete_user_use_case_js_1.DeleteUserUseCase,
         ],
-        exports: [user_repository_interface_js_1.USER_REPOSITORY],
+        exports: [user_repository_interface_js_1.USER_REPOSITORY, create_user_use_case_js_1.CreateUserUseCase],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

@@ -10,6 +10,7 @@ import { FindGuestsByPhoneUseCase } from '../../application/use-cases/guest/find
 import { UpdateGuestRSVPUseCase } from '../../application/use-cases/guest/update-guest-rsvp.use-case.js';
 import { CheckInGuestUseCase } from '../../application/use-cases/guest/check-in-guest.use-case.js';
 import { GetGuestByIdUseCase } from '../../application/use-cases/guest/get-guest-by-id.use-case.js';
+import { CreateUserUseCase } from '../../application/use-cases/user/create-user.use-case.js';
 import { CreateGuestDto } from '../../application/dtos/guest/create-guest.dto.js';
 import { UpdateGuestDto } from '../../application/dtos/guest/update-guest.dto.js';
 import { UpdateGuestRSVPDto } from '../../application/dtos/guest/update-guest-rsvp.dto.js';
@@ -32,7 +33,8 @@ export declare class GuestController {
     private readonly updateGuestRSVPUseCase;
     private readonly checkInGuestUseCase;
     private readonly getGuestByIdUseCase;
-    constructor(createGuestUseCase: CreateGuestUseCase, findGuestsByEventUseCase: FindGuestsByEventUseCase, updateGuestUseCase: UpdateGuestUseCase, deleteGuestUseCase: DeleteGuestUseCase, confirmGuestUseCase: ConfirmGuestUseCase, uploadGuestsSpreadsheetUseCase: UploadGuestsSpreadsheetUseCase, getEventDashboardUseCase: GetEventDashboardUseCase, getCompanionsUseCase: GetCompanionsUseCase, findGuestsByPhoneUseCase: FindGuestsByPhoneUseCase, updateGuestRSVPUseCase: UpdateGuestRSVPUseCase, checkInGuestUseCase: CheckInGuestUseCase, getGuestByIdUseCase: GetGuestByIdUseCase);
+    private readonly createUserUseCase;
+    constructor(createGuestUseCase: CreateGuestUseCase, findGuestsByEventUseCase: FindGuestsByEventUseCase, updateGuestUseCase: UpdateGuestUseCase, deleteGuestUseCase: DeleteGuestUseCase, confirmGuestUseCase: ConfirmGuestUseCase, uploadGuestsSpreadsheetUseCase: UploadGuestsSpreadsheetUseCase, getEventDashboardUseCase: GetEventDashboardUseCase, getCompanionsUseCase: GetCompanionsUseCase, findGuestsByPhoneUseCase: FindGuestsByPhoneUseCase, updateGuestRSVPUseCase: UpdateGuestRSVPUseCase, checkInGuestUseCase: CheckInGuestUseCase, getGuestByIdUseCase: GetGuestByIdUseCase, createUserUseCase: CreateUserUseCase);
     findByEvent(eventId: number, query: GuestFilterDto): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>>;
     getDashboard(eventId: number): Promise<import("../../application/dtos/guest/dashboard-response.dto.js").DashboardResponseDto>;
     getCompanions(eventId: number, id: number): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto[]>;

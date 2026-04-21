@@ -30,7 +30,7 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
     }
     async findByPhone(phone) {
         const entities = await this.ormRepository.find({
-            where: { phone, deletedAt: undefined },
+            where: { phone, deletedAt: (0, typeorm_2.IsNull)(), responsibleId: (0, typeorm_2.IsNull)() },
             order: { createdAt: 'DESC' },
         });
         return entities.map((e) => this.toDomain(e));
@@ -100,6 +100,17 @@ let GuestTypeOrmRepository = class GuestTypeOrmRepository {
             .andWhere('guest.is_child = :isChild', { isChild: true })
             .getCount();
         return { total, confirmed, notConfirmed: total - confirmed, attended, nonPayingChildrenCount };
+    }
+    async findByCompanionId(responsibleId) {
+        const entities = await this.ormRepository.find({
+            where: {
+                responsibleId: Array.isArray(responsibleId)
+                    ? (0, typeorm_2.In)(responsibleId)
+                    : responsibleId,
+                deletedAt: (0, typeorm_2.IsNull)()
+            },
+        });
+        return entities.map((e) => this.toDomain(e));
     }
     applyFilters(qb, filters) {
         if (filters.status) {

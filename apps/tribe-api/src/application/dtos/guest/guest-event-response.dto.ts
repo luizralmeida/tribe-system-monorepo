@@ -6,12 +6,12 @@ import { Event } from '../../../domain/entities/event.entity.js';
 export class GuestEventResponseDto extends GuestResponseDto {
   readonly event: EventResponseDto;
 
-  constructor(guest: Guest, event: Event) {
-    super(guest);
+  constructor(guest: Guest, event: Event, companions?: Guest[]) {
+    super(guest, companions);
     this.event = EventResponseDto.fromDomain(event);
   }
 
-  static fromDomainWithEvent(guest: Guest, event: Event): GuestEventResponseDto {
-    return new GuestEventResponseDto(guest, event);
+  static fromDomainWithEvent(guest: Guest, event: Event, companions?: Guest[]): GuestEventResponseDto {
+    return new GuestEventResponseDto(guest, event, companions);
   }
 }

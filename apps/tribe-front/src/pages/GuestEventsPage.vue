@@ -98,17 +98,23 @@ const formatDate = (dateStr: string) => {
                   {{ guest.event.address.city }}, {{ guest.event.address.state }}
                 </div>
               </div>
-              <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                :class="{
-                  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': guest.status === 'CONFIRMED',
-                  'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': guest.status === 'NOT_COMING',
-                  'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': guest.status === 'NOT_CONFIRMED'
-                }"
-              >
-                {{ 
-                  guest.status === 'CONFIRMED' ? 'Confirmado' : 
-                  guest.status === 'NOT_COMING' ? 'Não irá' : 'Pendente' 
-                }}
+              <div class="mt-4 flex flex-wrap items-center gap-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                  :class="{
+                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': guest.status === 'CONFIRMED',
+                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': guest.status === 'NOT_COMING',
+                    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': guest.status === 'NOT_CONFIRMED'
+                  }"
+                >
+                  {{ 
+                    guest.status === 'CONFIRMED' ? 'Confirmado' : 
+                    guest.status === 'NOT_COMING' ? 'Não irá' : 'Pendente' 
+                  }}
+                </div>
+                <div v-if="guest.companionCount > 0" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-full text-xs font-bold">
+                  <Heart class="w-3.5 h-3.5 fill-current" />
+                  +{{ guest.companionCount }} acompanhante(s)
+                </div>
               </div>
             </div>
           </div>

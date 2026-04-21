@@ -26,11 +26,13 @@ let FindGuestsByPhoneUseCase = class FindGuestsByPhoneUseCase {
     }
     async execute(input) {
         const guests = await this.guestRepository.findByPhone(input.phone);
+        const companions = await this.guestRepository.findByCompanionId(guests.map((g) => g.id));
         const results = await Promise.all(guests.map(async (guest) => {
             const event = await this.eventRepository.findById(guest.eventId);
-            if (!event)
+            if (!event) {
                 return null;
-            return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event);
+            }
+            return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event, companions);
         }));
         return results.filter((r) => r !== null);
     }

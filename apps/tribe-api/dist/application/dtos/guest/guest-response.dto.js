@@ -12,10 +12,11 @@ class GuestResponseDto {
     responsibleId;
     isChild;
     companionCount;
+    companions;
     age;
     createdAt;
     updatedAt;
-    constructor(guest) {
+    constructor(guest, companions) {
         this.id = guest.id;
         this.name = guest.name;
         this.phone = guest.phone;
@@ -25,13 +26,14 @@ class GuestResponseDto {
         this.email = guest.email;
         this.responsibleId = guest.responsibleId || null;
         this.isChild = guest.isChild;
-        this.companionCount = guest.companionCount || 0;
+        this.companionCount = companions?.length || 0;
         this.age = guest.age || null;
         this.createdAt = guest.createdAt;
         this.updatedAt = guest.updatedAt;
+        this.companions = companions?.map((c) => new GuestResponseDto(c, [])) || [];
     }
     static fromDomain(guest) {
-        return new GuestResponseDto(guest);
+        return new GuestResponseDto(guest, []);
     }
 }
 exports.GuestResponseDto = GuestResponseDto;

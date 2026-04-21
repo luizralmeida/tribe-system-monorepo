@@ -11,6 +11,7 @@ export interface Guest {
   responsibleId: number;
   isChild: boolean;
   companionCount: number;
+  companions?: Guest[];
   age?: number;
   createdAt: string;
   updatedAt: string | null;

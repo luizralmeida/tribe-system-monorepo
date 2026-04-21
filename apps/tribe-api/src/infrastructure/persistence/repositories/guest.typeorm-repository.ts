@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import type {
   IGuestRepository,
   GuestFilters,
@@ -26,7 +26,7 @@ export class GuestTypeOrmRepository implements IGuestRepository {
 
   async findByPhone(phone: string): Promise<Guest[]> {
     const entities = await this.ormRepository.find({
-      where: { phone, deletedAt: undefined },
+      where: { phone, deletedAt: IsNull(), responsibleId: IsNull() },
       order: { createdAt: 'DESC' },
     });
     return entities.map((e) => this.toDomain(e));
@@ -114,6 +114,19 @@ export class GuestTypeOrmRepository implements IGuestRepository {
       .getCount();
 
     return { total, confirmed, notConfirmed: total - confirmed, attended, nonPayingChildrenCount };
+  }
+
+  async findByCompanionId(responsibleId: number | number[]): Promise<Guest[]> {
+    const entities = await this.ormRepository.find({
+      where: { 
+        responsibleId: Array.isArray(responsibleId) 
+          ? In(responsibleId) 
+          : responsibleId,
+        deletedAt: IsNull() 
+      },
+    });
+
+    return entities.map((e) => this.toDomain(e));
   }
 
   private applyFilters(

@@ -22,6 +22,7 @@ export declare class GuestTypeOrmRepository implements IGuestRepository {
         phone?: string;
     }): Promise<void>;
     getDashboard(eventId: number): Promise<GuestDashboard>;
+    findByCompanionId(responsibleId: number | number[]): Promise<Guest[]>;
     private applyFilters;
     private toOrmData;
     private toDomain;

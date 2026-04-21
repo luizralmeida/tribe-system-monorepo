@@ -55,6 +55,7 @@ export interface IGuestRepository {
   softDeleteByResponsibleId(responsibleId: number): Promise<void>;
   updateDependentsContact(responsibleId: number, data: { email?: string; phone?: string }): Promise<void>;
   getDashboard(eventId: number): Promise<GuestDashboard>;
+  findByCompanionId(companionId: number | number[]): Promise<Guest[]>;
 }
 
 export const GUEST_REPOSITORY = Symbol('GUEST_REPOSITORY');

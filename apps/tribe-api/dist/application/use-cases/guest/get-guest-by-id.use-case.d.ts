@@ -9,6 +9,8 @@ export declare class GetGuestByIdUseCase implements IUseCase<GetGuestByIdInput, 
     private readonly guestRepository;
     private readonly eventRepository;
     constructor(guestRepository: IGuestRepository, eventRepository: IEventRepository);
+    private readonly logger;
     execute(input: GetGuestByIdInput): Promise<GuestEventResponseDto>;
+    private validateAndReturnEntities;
 }
 export {};

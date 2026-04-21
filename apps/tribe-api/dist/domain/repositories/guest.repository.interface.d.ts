@@ -56,5 +56,6 @@ export interface IGuestRepository {
         phone?: string;
     }): Promise<void>;
     getDashboard(eventId: number): Promise<GuestDashboard>;
+    findByCompanionId(companionId: number | number[]): Promise<Guest[]>;
 }
 export declare const GUEST_REPOSITORY: unique symbol;

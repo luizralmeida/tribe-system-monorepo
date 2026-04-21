@@ -11,9 +11,10 @@ export declare class GuestResponseDto {
     readonly responsibleId: number | null;
     readonly isChild: boolean;
     readonly companionCount: number;
+    readonly companions: GuestResponseDto[];
     readonly age: number | null;
     readonly createdAt: Date;
     readonly updatedAt: Date | null;
-    constructor(guest: Guest);
+    constructor(guest: Guest, companions?: Guest[]);
     static fromDomain(guest: Guest): GuestResponseDto;
 }

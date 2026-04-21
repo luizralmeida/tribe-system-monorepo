@@ -11,9 +11,10 @@ import {
   ArrowLeft, 
   Loader2, 
   Heart,
-  Share2,
   Copy,
-  Check
+  Check,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -26,16 +27,29 @@ const isLoading = ref(true);
 const isUpdating = ref(false);
 const error = ref('');
 const showCopied = ref(false);
+const collapsedStates = ref<Record<number, boolean>>({});
 
 onMounted(async () => {
   try {
     guest.value = await guestService.getGuestById(guestId);
+    if (guest.value) {
+      // Parent guest starts expanded
+      collapsedStates.value[guest.value.id] = false;
+      // Companions start collapsed
+      guest.value.companions?.forEach(c => {
+        collapsedStates.value[c.id] = true;
+      });
+    }
   } catch (err: any) {
     error.value = 'Houve um problema ao carregar as informações do seu convite.';
   } finally {
     isLoading.value = false;
   }
 });
+
+const toggleCollapse = (id: number) => {
+  collapsedStates.value[id] = !collapsedStates.value[id];
+};
 
 const handleRSVP = async (status: 'CONFIRMED' | 'NOT_COMING') => {
   isUpdating.value = true;
@@ -99,121 +113,158 @@ const copyLink = () => {
       </div>
 
       <div v-else class="space-y-6">
-        <!-- Event Card -->
-        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden">
-          <div class="bg-primary-600 p-8 text-white relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10">
-              <QrCode class="w-40 h-40" />
-            </div>
-            <div class="relative z-10 space-y-2">
-              <h1 class="text-3xl font-black">{{ guest.event.name }}</h1>
-              <div class="flex items-center gap-2 opacity-90 text-sm">
-                <Calendar class="w-4 h-4" />
-                {{ formatDate(guest.event.date) }}
-              </div>
-            </div>
+        <!-- Top Summary -->
+        <div v-if="guest.companionCount > 0" class="bg-primary-50 dark:bg-primary-900/10 p-4 rounded-2xl border border-primary-100 dark:border-primary-900/30 flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center shrink-0">
+            <Heart class="w-5 h-5 text-primary-600" />
           </div>
-
-          <div class="p-8 space-y-8 text-center">
-            <div v-if="guest.event.address" class="flex flex-col items-center gap-2 text-slate-600 dark:text-slate-400">
-              <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-1">
-                <MapPin class="w-6 h-6 text-primary-600" />
-              </div>
-              <p class="font-bold text-slate-900 dark:text-white">{{ guest.event.address.street }}, {{ guest.event.address.number }}</p>
-              <p class="text-sm">{{ guest.event.address.neighborhood }} - {{ guest.event.address.city }}/{{ guest.event.address.state }}</p>
-            </div>
-
-            <!-- RSVP Status / Actions -->
-            <div v-if="guest.status === 'NOT_CONFIRMED' && !isUpdating" class="space-y-4">
-              <p class="text-lg font-bold text-slate-800 dark:text-white">Você confirma sua presença?</p>
-              <div class="grid grid-cols-2 gap-4">
-                <button 
-                  @click="handleRSVP('CONFIRMED')"
-                  class="flex flex-col items-center gap-3 p-6 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black rounded-3xl border-2 border-transparent hover:border-emerald-500 transition-all"
-                >
-                  <CheckCircle2 class="w-8 h-8" />
-                  Confirmar
-                </button>
-                <button 
-                  @click="handleRSVP('NOT_COMING')"
-                  class="flex flex-col items-center gap-3 p-6 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-black rounded-3xl border-2 border-transparent hover:border-red-500 transition-all"
-                >
-                  <XCircle class="w-8 h-8" />
-                  Não irei
-                </button>
-              </div>
-            </div>
-
-            <div v-else-if="isUpdating" class="py-10 flex flex-col items-center gap-4">
-              <Loader2 class="w-10 h-10 text-primary-600 animate-spin" />
-              <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Atualizando sua resposta...</p>
-            </div>
-
-            <!-- Confirmed State -->
-            <div v-else-if="guest.status === 'CONFIRMED'" class="space-y-8">
-              <div class="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-3xl border border-emerald-100 dark:border-emerald-900/30">
-                <div class="flex items-center justify-center gap-3 text-emerald-600 dark:text-emerald-400 mb-2">
-                  <CheckCircle2 class="w-6 h-6" />
-                  <span class="text-xl font-black">Presença Confirmada!</span>
-                </div>
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Apresente o código abaixo na entrada do evento.</p>
-              </div>
-
-              <div v-if="qrCode" class="space-y-4">
-                <div class="bg-white p-4 rounded-3xl inline-block shadow-lg border border-slate-100">
-                  <img :src="qrCode" alt="Ticket QR Code" class="w-48 h-48" />
-                </div>
-                <div class="flex items-center justify-center gap-4">
-                  <button @click="copyLink" class="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all">
-                    <component :is="showCopied ? Check : Copy" class="w-5 h-5" />
-                  </button>
-                  <button class="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all">
-                    <Share2 class="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              <button @click="handleRSVP('NOT_COMING')" class="text-sm font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-wider">
-                Alterar resposta para "Não irei"
-              </button>
-            </div>
-
-            <!-- Not Coming State -->
-            <div v-else-if="guest.status === 'NOT_COMING'" class="space-y-6 py-4">
-              <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart class="w-10 h-10 text-slate-300" />
-              </div>
-              <div class="space-y-2">
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white">Obrigado pela resposta!</h3>
-                <p class="text-slate-500 dark:text-slate-400">Sua ausência foi registrada. Caso mude de ideia, você pode alterar sua resposta abaixo.</p>
-              </div>
-              <button 
-                @click="handleRSVP('CONFIRMED')"
-                class="px-8 py-4 bg-primary-600 text-white font-black rounded-2xl shadow-xl shadow-primary-500/20 hover:bg-primary-700 transition-all w-full"
-              >
-                Mudei de ideia, EU VOU!
-              </button>
-            </div>
+          <div>
+            <p class="text-sm font-bold text-primary-900 dark:text-primary-100">Você e mais {{ guest.companionCount }} acompanhante(s)</p>
+            <p class="text-xs text-primary-600 dark:text-primary-400">Confirme a presença de todos abaixo.</p>
           </div>
         </div>
 
-        <!-- Guest Info Card -->
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800">
-           <h4 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">Dados do Convidado</h4>
-           <div class="space-y-4">
-             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-               <span class="text-slate-500 text-sm">Nome</span>
-               <span class="font-bold text-slate-900 dark:text-white">{{ guest.name }}</span>
-             </div>
-             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-               <span class="text-slate-500 text-sm">Telefone</span>
-               <span class="font-bold text-slate-900 dark:text-white">{{ guest.phone }}</span>
-             </div>
-             <div v-if="guest.companionCount > 0" class="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/10 rounded-2xl">
-               <span class="text-primary-600 dark:text-primary-400 text-sm font-bold">Acompanhantes</span>
-               <span class="font-black text-primary-600 dark:text-primary-400">+{{ guest.companionCount }}</span>
-             </div>
-           </div>
+        <!-- Guest Cards (Parent + Companions) -->
+        <div v-for="currentGuest in [guest, ...(guest.companions || [])]" :key="currentGuest.id" 
+          class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transition-all duration-300"
+          :class="{ 'opacity-90 grayscale-[0.2]': collapsedStates[currentGuest.id] }"
+        >
+          <!-- Card Header (Always visible) -->
+          <div 
+            @click="toggleCollapse(currentGuest.id)"
+            class="p-6 cursor-pointer flex items-center justify-between group"
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
+                :class="currentGuest.status === 'CONFIRMED' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'"
+              >
+                <CheckCircle2 v-if="currentGuest.status === 'CONFIRMED'" class="w-6 h-6" />
+                <Calendar v-else class="w-6 h-6" />
+              </div>
+              <div>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white">{{ currentGuest.name }}</h3>
+                <p v-if="collapsedStates[currentGuest.id]" class="text-xs font-bold uppercase tracking-wider"
+                  :class="currentGuest.status === 'CONFIRMED' ? 'text-emerald-600' : 'text-slate-400'"
+                >
+                  {{ currentGuest.status === 'CONFIRMED' ? 'Confirmado' : 'Pendente' }}
+                </p>
+              </div>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-600 transition-all">
+              <component :is="collapsedStates[currentGuest.id] ? ChevronDown : ChevronUp" class="w-5 h-5" />
+            </div>
+          </div>
+
+          <!-- Card Content (Minimizable) -->
+          <div v-show="!collapsedStates[currentGuest.id]" class="border-t border-slate-50 dark:border-slate-800/50">
+            <!-- Event Info (Shared Context) -->
+            <div class="bg-primary-600 p-8 text-white relative overflow-hidden">
+              <div class="absolute top-0 right-0 p-4 opacity-10">
+                <QrCode class="w-32 h-32" />
+              </div>
+              <div class="relative z-10 space-y-1">
+                <h4 class="text-xs font-black uppercase tracking-[0.2em] opacity-80">Evento</h4>
+                <h2 class="text-2xl font-black">{{ guest.event.name }}</h2>
+                <div class="flex items-center gap-2 opacity-90 text-xs font-bold">
+                  <Calendar class="w-3.5 h-3.5" />
+                  {{ formatDate(guest.event.date) }}
+                </div>
+              </div>
+            </div>
+
+            <div class="p-8 space-y-8 text-center">
+              <!-- Guest Details -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                  <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Telefone</p>
+                  <p class="font-bold text-slate-900 dark:text-white">{{ currentGuest.phone }}</p>
+                </div>
+                <div v-if="currentGuest.email" class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                  <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">E-mail</p>
+                  <p class="font-bold text-slate-900 dark:text-white truncate">{{ currentGuest.email }}</p>
+                </div>
+              </div>
+
+              <!-- Address (Only in parent/main card or for better UX) -->
+              <div v-if="guest.event.address" class="flex flex-col items-center gap-2 text-slate-600 dark:text-slate-400 pt-4">
+                <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-1">
+                  <MapPin class="w-5 h-5 text-primary-600" />
+                </div>
+                <p class="font-bold text-slate-900 dark:text-white text-sm">{{ guest.event.address.street }}, {{ guest.event.address.number }}</p>
+                <p class="text-[11px]">{{ guest.event.address.neighborhood }} - {{ guest.event.address.city }}/{{ guest.event.address.state }}</p>
+              </div>
+
+              <!-- RSVP Actions -->
+              <div v-if="currentGuest.status === 'NOT_CONFIRMED' && !isUpdating" class="space-y-4 pt-4">
+                <p class="text-base font-bold text-slate-800 dark:text-white">Confirma presença para {{ currentGuest.name }}?</p>
+                <div class="grid grid-cols-2 gap-4">
+                  <button 
+                    @click="handleRSVP('CONFIRMED')"
+                    class="flex flex-col items-center gap-2 p-5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black rounded-3xl border-2 border-transparent hover:border-emerald-500 transition-all text-sm"
+                  >
+                    <CheckCircle2 class="w-6 h-6" />
+                    Confirmar
+                  </button>
+                  <button 
+                    @click="handleRSVP('NOT_COMING')"
+                    class="flex flex-col items-center gap-2 p-5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-black rounded-3xl border-2 border-transparent hover:border-red-500 transition-all text-sm"
+                  >
+                    <XCircle class="w-6 h-6" />
+                    Não irei
+                  </button>
+                </div>
+              </div>
+
+              <div v-else-if="currentGuest.id === guestId && isUpdating" class="py-6 flex flex-col items-center gap-4">
+                <Loader2 class="w-10 h-10 text-primary-600 animate-spin" />
+                <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Atualizando...</p>
+              </div>
+
+              <!-- Confirmed State -->
+              <div v-else-if="currentGuest.status === 'CONFIRMED'" class="space-y-6 pt-4">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 p-5 rounded-3xl border border-emerald-100 dark:border-emerald-900/30">
+                  <div class="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400 mb-1">
+                    <CheckCircle2 class="w-5 h-5" />
+                    <span class="text-lg font-black">Presença Confirmada!</span>
+                  </div>
+                  <p class="text-slate-500 dark:text-slate-400 text-[11px]">Apresente o QR Code na entrada.</p>
+                </div>
+
+                <!-- QR Code (Currently only for parent as service returns one QR code, but in future could be per guest) -->
+                <div v-if="currentGuest.id === guestId && qrCode" class="space-y-4">
+                  <div class="bg-white p-4 rounded-3xl inline-block shadow-lg border border-slate-100">
+                    <img :src="qrCode" alt="Ticket QR Code" class="w-40 h-40" />
+                  </div>
+                  <div class="flex items-center justify-center gap-4">
+                    <button @click="copyLink" class="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all">
+                      <component :is="showCopied ? Check : Copy" class="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <button v-if="currentGuest.id === guestId" @click="handleRSVP('NOT_COMING')" class="text-[10px] font-black text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest mt-4">
+                  Alterar resposta para "Não irei"
+                </button>
+              </div>
+
+              <!-- Not Coming State -->
+              <div v-else-if="currentGuest.status === 'NOT_COMING'" class="space-y-4 py-4">
+                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                  <Heart class="w-8 h-8 text-slate-300" />
+                </div>
+                <div class="space-y-1">
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white">Ausência registrada</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Mude de ideia a qualquer momento abaixo.</p>
+                </div>
+                <button 
+                  @click="handleRSVP('CONFIRMED')"
+                  class="px-6 py-3 bg-primary-600 text-white font-black rounded-2xl shadow-lg shadow-primary-500/20 hover:bg-primary-700 transition-all w-full text-sm"
+                >
+                  Eu vou!
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

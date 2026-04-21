@@ -164,8 +164,8 @@ export class GuestController {
     return this.checkInGuestUseCase.execute({ id });
   }
 
+  @Public()
   @Get('guests/:id')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.getGuestByIdUseCase.execute({ id });
   }

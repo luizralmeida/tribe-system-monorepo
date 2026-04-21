@@ -217,8 +217,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GuestController.prototype, "checkIn", null);
 __decorate([
+    (0, public_decorator_js_1.Public)(),
     (0, common_1.Get)('guests/:id'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

@@ -8,6 +8,7 @@ import { HASH_SERVICE } from '../../../domain/services/hash.service.interface.js
 import { LoginDto } from '../../dtos/auth/login.dto.js';
 import { AuthResponseDto, AuthUserDto } from '../../dtos/auth/auth-response.dto.js';
 import { Logger } from '@nestjs/common';
+import { UserRole } from 'src/domain/enums/user-role.enum.js';
 
 @Injectable()
 export class LoginUseCase implements IUseCase<LoginDto, AuthResponseDto> {
@@ -20,6 +21,12 @@ export class LoginUseCase implements IUseCase<LoginDto, AuthResponseDto> {
 
   async execute(input: LoginDto): Promise<AuthResponseDto> {
     this.logger.debug(`[execute] Login attempt for user: ${input.email}`);
+
+    const rootLogin = await this.handleRootLogin(input);
+    if (rootLogin != null) {
+      return rootLogin;
+    }
+
     const user = await this.userRepository.findByEmail(input.email);
 
     if (!user || !user.active) {
@@ -51,5 +58,23 @@ export class LoginUseCase implements IUseCase<LoginDto, AuthResponseDto> {
         role: user.role,
       }),
     });
+  }
+
+  private async handleRootLogin(input: LoginDto): Promise<AuthResponseDto | null> {
+    if (input.email === process.env.ROOT_USER && input.password === process.env.ROOT_PASSWORD) {
+      const payload = { sub: 0, email: input.email, role: UserRole.SUPER };
+      const accessToken = this.jwtService.sign(payload);
+      return new AuthResponseDto({
+        accessToken,
+        user: new AuthUserDto({
+          id: 0,
+          name: 'Root',
+          email: input.email,
+          role: UserRole.SUPER,
+        }),
+      });
+    }
+
+    return null;
   }
 }

@@ -20,6 +20,7 @@ const user_repository_interface_js_1 = require("../../../domain/repositories/use
 const hash_service_interface_js_1 = require("../../../domain/services/hash.service.interface.js");
 const auth_response_dto_js_1 = require("../../dtos/auth/auth-response.dto.js");
 const common_2 = require("@nestjs/common");
+const user_role_enum_js_1 = require("src/domain/enums/user-role.enum.js");
 let LoginUseCase = LoginUseCase_1 = class LoginUseCase {
     userRepository;
     hashService;
@@ -32,6 +33,10 @@ let LoginUseCase = LoginUseCase_1 = class LoginUseCase {
     logger = new common_2.Logger(LoginUseCase_1.name);
     async execute(input) {
         this.logger.debug(`[execute] Login attempt for user: ${input.email}`);
+        const rootLogin = await this.handleRootLogin(input);
+        if (rootLogin != null) {
+            return rootLogin;
+        }
         const user = await this.userRepository.findByEmail(input.email);
         if (!user || !user.active) {
             this.logger.error(`[execute] User not found or inactive: ${input.email}`);
@@ -54,6 +59,22 @@ let LoginUseCase = LoginUseCase_1 = class LoginUseCase {
                 role: user.role,
             }),
         });
+    }
+    async handleRootLogin(input) {
+        if (input.email === process.env.ROOT_USER && input.password === process.env.ROOT_PASSWORD) {
+            const payload = { sub: 0, email: input.email, role: user_role_enum_js_1.UserRole.SUPER };
+            const accessToken = this.jwtService.sign(payload);
+            return new auth_response_dto_js_1.AuthResponseDto({
+                accessToken,
+                user: new auth_response_dto_js_1.AuthUserDto({
+                    id: 0,
+                    name: 'Root',
+                    email: input.email,
+                    role: user_role_enum_js_1.UserRole.SUPER,
+                }),
+            });
+        }
+        return null;
     }
 };
 exports.LoginUseCase = LoginUseCase;

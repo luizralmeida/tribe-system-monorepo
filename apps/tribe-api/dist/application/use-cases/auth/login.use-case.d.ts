@@ -11,4 +11,5 @@ export declare class LoginUseCase implements IUseCase<LoginDto, AuthResponseDto>
     constructor(userRepository: IUserRepository, hashService: IHashService, jwtService: JwtService);
     private readonly logger;
     execute(input: LoginDto): Promise<AuthResponseDto>;
+    private handleRootLogin;
 }

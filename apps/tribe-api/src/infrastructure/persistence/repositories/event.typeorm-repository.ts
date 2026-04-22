@@ -26,20 +26,28 @@ export class EventTypeOrmRepository implements IEventRepository {
   }
 
   async findAll(
-    options: { page: number; limit: number } = { page: 1, limit: 20 },
+    options: { page: number; limit: number; name?: string } = { page: 1, limit: 20 },
   ): Promise<{ data: Event[]; total: number }> {
-    const [entities, total] = await this.ormRepository.findAndCount({
-      skip: (options.page - 1) * options.limit,
-      take: options.limit,
-      order: { date: 'DESC' },
-      relations: ['address']
-    });
+    const qb = this.ormRepository
+      .createQueryBuilder('event')
+      .leftJoinAndSelect('event.address', 'address');
+
+    if (options.name) {
+      qb.andWhere('event.name LIKE :name', { name: `%${options.name}%` });
+    }
+
+    const [entities, total] = await qb
+      .orderBy('event.date', 'DESC')
+      .skip((options.page - 1) * options.limit)
+      .take(options.limit)
+      .getManyAndCount();
+
     return { data: entities.map((e) => this.toDomain(e)), total };
   }
 
   async findByUserId(
     userId: number,
-    options: { page: number; limit: number } = { page: 1, limit: 20 },
+    options: { page: number; limit: number; name?: string } = { page: 1, limit: 20 },
   ): Promise<{ data: Event[]; total: number }> {
     const qb = this.ormRepository
       .createQueryBuilder('event')
@@ -49,8 +57,13 @@ export class EventTypeOrmRepository implements IEventRepository {
         'ue',
         'ue.fk_event = event.id AND ue.fk_user = :userId',
         { userId },
-      )
-      .orderBy('event.date', 'DESC')
+      );
+
+    if (options.name) {
+      qb.andWhere('event.name LIKE :name', { name: `%${options.name}%` });
+    }
+
+    qb.orderBy('event.date', 'DESC')
       .skip((options.page - 1) * options.limit)
       .take(options.limit);
 

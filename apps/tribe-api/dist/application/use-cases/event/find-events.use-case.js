@@ -24,11 +24,11 @@ let FindEventsUseCase = class FindEventsUseCase {
         this.eventRepository = eventRepository;
     }
     async execute(input) {
-        const page = input.page ?? 1;
-        const limit = input.limit ?? 20;
+        const { page = 1, limit = 20, name } = input;
+        const options = { page, limit, name };
         const { data, total } = input.userRole === user_role_enum_js_1.UserRole.SUPER
-            ? await this.eventRepository.findAll({ page, limit })
-            : await this.eventRepository.findByUserId(input.userId, { page, limit });
+            ? await this.eventRepository.findAll(options)
+            : await this.eventRepository.findByUserId(input.userId, options);
         return new pagination_dto_js_1.PaginatedResponseDto({
             data: data.map(event_response_dto_js_1.EventResponseDto.fromDomain),
             total,

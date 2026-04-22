@@ -19,6 +19,7 @@ export interface IEventRepository {
     findAll(options?: {
         page: number;
         limit: number;
+        name?: string;
     }): Promise<{
         data: Event[];
         total: number;
@@ -26,6 +27,7 @@ export interface IEventRepository {
     findByUserId(userId: number, options?: {
         page: number;
         limit: number;
+        name?: string;
     }): Promise<{
         data: Event[];
         total: number;

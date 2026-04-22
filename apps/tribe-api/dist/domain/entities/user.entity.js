@@ -10,6 +10,7 @@ class User extends entity_base_js_1.BaseEntity {
     email;
     role;
     active;
+    eventIds;
     constructor(props) {
         super(props);
         this.name = props.name;
@@ -18,6 +19,7 @@ class User extends entity_base_js_1.BaseEntity {
         this.email = props.email;
         this.role = props.role;
         this.active = props.active;
+        this.eventIds = props.eventIds;
     }
     isSuper() {
         return this.role === user_role_enum_js_1.UserRole.SUPER;

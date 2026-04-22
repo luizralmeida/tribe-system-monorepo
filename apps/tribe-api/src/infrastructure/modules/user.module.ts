@@ -11,11 +11,13 @@ import { UpdateUserUseCase } from '../../application/use-cases/user/update-user.
 import { DeleteUserUseCase } from '../../application/use-cases/user/delete-user.use-case.js';
 import { UserController } from '../../presentation/controllers/user.controller.js';
 import { AuthModule } from './auth.module.js';
+import { EventModule } from './event.module.js';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserTypeOrmEntity]),
     forwardRef(() => AuthModule),
+    forwardRef(() => EventModule),
   ],
   controllers: [UserController],
   providers: [

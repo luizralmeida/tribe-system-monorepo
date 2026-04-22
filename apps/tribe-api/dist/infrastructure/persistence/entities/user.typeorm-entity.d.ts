@@ -1,4 +1,5 @@
 import { UserRole } from '../../../domain/enums/user-role.enum.js';
+import { UserEventTypeOrmEntity } from './user-event.typeorm-entity.js';
 export declare class UserTypeOrmEntity {
     id: number;
     name: string;
@@ -10,4 +11,5 @@ export declare class UserTypeOrmEntity {
     createdAt: Date;
     updatedAt: Date | null;
     deletedAt: Date | null;
+    userEvents?: UserEventTypeOrmEntity[];
 }

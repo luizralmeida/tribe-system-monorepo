@@ -8,7 +8,7 @@ import { HASH_SERVICE } from '../../../domain/services/hash.service.interface.js
 import { LoginDto } from '../../dtos/auth/login.dto.js';
 import { AuthResponseDto, AuthUserDto } from '../../dtos/auth/auth-response.dto.js';
 import { Logger } from '@nestjs/common';
-import { UserRole } from 'src/domain/enums/user-role.enum.js';
+import { UserRole } from '../../../domain/enums/user-role.enum.js';
 
 @Injectable()
 export class LoginUseCase implements IUseCase<LoginDto, AuthResponseDto> {

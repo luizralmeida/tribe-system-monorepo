@@ -35,20 +35,28 @@ let EventTypeOrmRepository = class EventTypeOrmRepository {
         return entity ? this.toDomain(entity) : null;
     }
     async findAll(options = { page: 1, limit: 20 }) {
-        const [entities, total] = await this.ormRepository.findAndCount({
-            skip: (options.page - 1) * options.limit,
-            take: options.limit,
-            order: { date: 'DESC' },
-            relations: ['address']
-        });
+        const qb = this.ormRepository
+            .createQueryBuilder('event')
+            .leftJoinAndSelect('event.address', 'address');
+        if (options.name) {
+            qb.andWhere('event.name LIKE :name', { name: `%${options.name}%` });
+        }
+        const [entities, total] = await qb
+            .orderBy('event.date', 'DESC')
+            .skip((options.page - 1) * options.limit)
+            .take(options.limit)
+            .getManyAndCount();
         return { data: entities.map((e) => this.toDomain(e)), total };
     }
     async findByUserId(userId, options = { page: 1, limit: 20 }) {
         const qb = this.ormRepository
             .createQueryBuilder('event')
             .leftJoinAndSelect('event.address', 'address')
-            .innerJoin(user_event_typeorm_entity_js_1.UserEventTypeOrmEntity, 'ue', 'ue.fk_event = event.id AND ue.fk_user = :userId', { userId })
-            .orderBy('event.date', 'DESC')
+            .innerJoin(user_event_typeorm_entity_js_1.UserEventTypeOrmEntity, 'ue', 'ue.fk_event = event.id AND ue.fk_user = :userId', { userId });
+        if (options.name) {
+            qb.andWhere('event.name LIKE :name', { name: `%${options.name}%` });
+        }
+        qb.orderBy('event.date', 'DESC')
             .skip((options.page - 1) * options.limit)
             .take(options.limit);
         const [entities, total] = await qb.getManyAndCount();

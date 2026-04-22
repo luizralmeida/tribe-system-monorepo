@@ -10,6 +10,7 @@ class UserResponseDto {
     active;
     createdAt;
     updatedAt;
+    eventIds;
     constructor(user) {
         this.id = user.id;
         this.name = user.name;
@@ -17,6 +18,7 @@ class UserResponseDto {
         this.email = user.email;
         this.role = user.role;
         this.active = user.active;
+        this.eventIds = user.eventIds;
         this.createdAt = user.createdAt;
         this.updatedAt = user.updatedAt;
     }

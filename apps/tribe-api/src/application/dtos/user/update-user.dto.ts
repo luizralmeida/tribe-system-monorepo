@@ -1,8 +1,10 @@
 import {
+  IsArray,
   IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
@@ -39,4 +41,9 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  eventIds?: number[];
 }

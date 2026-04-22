@@ -19,6 +19,7 @@ class UpdateUserDto {
     email;
     role;
     active;
+    eventIds;
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
@@ -56,4 +57,10 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateUserDto.prototype, "active", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
+    __metadata("design:type", Array)
+], UpdateUserDto.prototype, "eventIds", void 0);
 //# sourceMappingURL=update-user.dto.js.map

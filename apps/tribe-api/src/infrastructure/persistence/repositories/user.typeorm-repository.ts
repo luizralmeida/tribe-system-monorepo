@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { IUserRepository } from '../../../domain/repositories/user.repository.interface.js';
 import { User } from '../../../domain/entities/user.entity.js';
 import { UserTypeOrmEntity } from '../entities/user.typeorm-entity.js';
-import { UserFilter } from 'src/application/dtos/user/user-filter.dto.js';
+import { UserFilter } from '../../../application/dtos/user/user-filter.dto.js';
 import { FindOptionsWhere, Like } from 'typeorm';
 import { UserRole } from '../../../domain/enums/user-role.enum.js';
 import { UserStats } from '../../../domain/repositories/user.repository.interface.js';
@@ -17,7 +17,10 @@ export class UserTypeOrmRepository implements IUserRepository {
   ) {}
 
   async findById(id: number): Promise<User | null> {
-    const entity = await this.ormRepository.findOne({ where: { id } });
+    const entity = await this.ormRepository.findOne({ 
+      where: { id },
+      relations: ['userEvents']
+    });
     return entity ? this.toDomain(entity) : null;
   }
 
@@ -120,6 +123,7 @@ export class UserTypeOrmRepository implements IUserRepository {
       email: entity.email,
       role: entity.role,
       active: entity.active,
+      eventIds: entity.userEvents?.map((ue) => Number(ue.eventId)),
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       deletedAt: entity.deletedAt,

@@ -10,7 +10,7 @@ import { GetEventStatsUseCase } from '../../application/use-cases/event/get-even
 import { CreateEventDto } from '../../application/dtos/event/create-event.dto.js';
 import { UpdateEventDto } from '../../application/dtos/event/update-event.dto.js';
 import { AssociateUserEventDto } from '../../application/dtos/event/associate-user-event.dto.js';
-import { PaginationQueryDto } from '../../application/dtos/pagination.dto.js';
+import { FindEventsQueryDto } from '../../application/dtos/event/find-events-query.dto.js';
 interface AuthenticatedRequest {
     user: {
         id: number;
@@ -29,7 +29,7 @@ export declare class EventController {
     private readonly dissociateUserEventUseCase;
     constructor(createEventUseCase: CreateEventUseCase, findEventsUseCase: FindEventsUseCase, findEventByIdUseCase: FindEventByIdUseCase, getEventStatsUseCase: GetEventStatsUseCase, findEventWithUsersUseCase: FindEventWithUsersUseCase, updateEventUseCase: UpdateEventUseCase, deleteEventUseCase: DeleteEventUseCase, associateUserEventUseCase: AssociateUserEventUseCase, dissociateUserEventUseCase: DissociateUserEventUseCase);
     create(dto: CreateEventDto): Promise<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>;
-    findAll(query: PaginationQueryDto, req: AuthenticatedRequest): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>>;
+    findAll(query: FindEventsQueryDto, req: AuthenticatedRequest): Promise<import("../../application/dtos/pagination.dto.js").PaginatedResponseDto<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>>;
     getStats(req: AuthenticatedRequest): Promise<import("../../application/dtos/event/event-stats.dto.js").EventStatsResponseDto>;
     findById(id: number, req: AuthenticatedRequest): Promise<import("../../application/dtos/event/event-response.dto.js").EventResponseDto>;
     findWithUsers(id: number): Promise<import("../../application/dtos/event/event-response.dto.js").EventWithUsersResponseDto>;

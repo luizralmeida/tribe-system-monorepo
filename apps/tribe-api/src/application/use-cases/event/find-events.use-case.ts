@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { IUseCase } from '../../../domain/services/use-case.interface.js';
 import type { IEventRepository } from '../../../domain/repositories/event.repository.interface.js';
 import { EVENT_REPOSITORY } from '../../../domain/repositories/event.repository.interface.js';
-import { PaginationQueryDto, PaginatedResponseDto } from '../../dtos/pagination.dto.js';
+import { FindEventsQueryDto } from '../../dtos/event/find-events-query.dto.js';
+import { PaginatedResponseDto } from '../../dtos/pagination.dto.js';
 import { EventResponseDto } from '../../dtos/event/event-response.dto.js';
 import { UserRole } from '../../../domain/enums/user-role.enum.js';
 
-interface FindEventsInput extends PaginationQueryDto {
+interface FindEventsInput extends FindEventsQueryDto {
   userId: number;
   userRole: UserRole;
 }
@@ -22,12 +23,12 @@ export class FindEventsUseCase
   async execute(
     input: FindEventsInput,
   ): Promise<PaginatedResponseDto<EventResponseDto>> {
-    const page = input.page ?? 1;
-    const limit = input.limit ?? 20;
+    const { page = 1, limit = 20, name } = input;
+    const options = { page, limit, name };
 
     const { data, total } = input.userRole === UserRole.SUPER
-      ? await this.eventRepository.findAll({ page, limit })
-      : await this.eventRepository.findByUserId(input.userId, { page, limit });
+      ? await this.eventRepository.findAll(options)
+      : await this.eventRepository.findByUserId(input.userId, options);
 
     return new PaginatedResponseDto({
       data: data.map(EventResponseDto.fromDomain),

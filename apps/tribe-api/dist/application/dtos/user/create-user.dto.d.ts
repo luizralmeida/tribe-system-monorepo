@@ -6,4 +6,5 @@ export declare class CreateUserDto {
     email: string;
     role: UserRole;
     active: boolean;
+    eventIds?: number[];
 }

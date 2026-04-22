@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserRole } from '../../../domain/enums/user-role.enum.js';
+import { UserEventTypeOrmEntity } from './user-event.typeorm-entity.js';
 
 @Entity('tb_user')
 export class UserTypeOrmEntity {
@@ -39,4 +41,7 @@ export class UserTypeOrmEntity {
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt!: Date | null;
+
+  @OneToMany(() => UserEventTypeOrmEntity, (userEvent) => userEvent.user)
+  userEvents?: UserEventTypeOrmEntity[];
 }

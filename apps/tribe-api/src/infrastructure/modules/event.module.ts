@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventTypeOrmEntity } from '../persistence/entities/event.typeorm-entity.js';
 import { UserEventTypeOrmEntity } from '../persistence/entities/user-event.typeorm-entity.js';
@@ -24,7 +24,7 @@ import { AddressModule } from './address.module.js';
 @Module({
   imports: [
     TypeOrmModule.forFeature([EventTypeOrmEntity, UserEventTypeOrmEntity]),
-    UserModule,
+    forwardRef(() => UserModule),
     AddressModule,
   ],
   controllers: [EventController],

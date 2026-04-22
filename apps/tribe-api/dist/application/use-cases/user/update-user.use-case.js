@@ -17,12 +17,15 @@ const common_1 = require("@nestjs/common");
 const user_repository_interface_js_1 = require("../../../domain/repositories/user.repository.interface.js");
 const hash_service_interface_js_1 = require("../../../domain/services/hash.service.interface.js");
 const user_response_dto_js_1 = require("../../dtos/user/user-response.dto.js");
+const user_event_repository_interface_js_1 = require("../../../domain/repositories/user-event.repository.interface.js");
 let UpdateUserUseCase = class UpdateUserUseCase {
     userRepository;
     hashService;
-    constructor(userRepository, hashService) {
+    userEventRepository;
+    constructor(userRepository, hashService, userEventRepository) {
         this.userRepository = userRepository;
         this.hashService = hashService;
+        this.userEventRepository = userEventRepository;
     }
     async execute(input) {
         const existingUser = await this.userRepository.findById(input.id);
@@ -35,7 +38,20 @@ let UpdateUserUseCase = class UpdateUserUseCase {
             updateData.password = await this.hashService.hash(updateData.password);
         }
         const user = await this.userRepository.update(input.id, updateData);
+        if (input.data.eventIds !== undefined) {
+            await this.syncEvents(input.id, input.data.eventIds);
+        }
         return user_response_dto_js_1.UserResponseDto.fromDomain(user);
+    }
+    async syncEvents(userId, newEventIds) {
+        const currentAssociations = await this.userEventRepository.findByUserId(userId);
+        const currentEventIds = currentAssociations.map((a) => a.eventId);
+        const toAssociate = newEventIds.filter((id) => !currentEventIds.includes(id));
+        const toDissociate = currentEventIds.filter((id) => !newEventIds.includes(id));
+        await Promise.all([
+            ...toAssociate.map((id) => this.userEventRepository.associate(userId, id)),
+            ...toDissociate.map((id) => this.userEventRepository.dissociate(userId, id)),
+        ]);
     }
     async validateUniqueness(userId, data) {
         if (data.email) {
@@ -57,6 +73,7 @@ exports.UpdateUserUseCase = UpdateUserUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(user_repository_interface_js_1.USER_REPOSITORY)),
     __param(1, (0, common_1.Inject)(hash_service_interface_js_1.HASH_SERVICE)),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, common_1.Inject)(user_event_repository_interface_js_1.USER_EVENT_REPOSITORY)),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], UpdateUserUseCase);
 //# sourceMappingURL=update-user.use-case.js.map

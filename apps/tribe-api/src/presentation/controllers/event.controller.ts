@@ -27,6 +27,7 @@ import { CreateEventDto } from '../../application/dtos/event/create-event.dto.js
 import { UpdateEventDto } from '../../application/dtos/event/update-event.dto.js';
 import { AssociateUserEventDto } from '../../application/dtos/event/associate-user-event.dto.js';
 import { PaginationQueryDto } from '../../application/dtos/pagination.dto.js';
+import { FindEventsQueryDto } from '../../application/dtos/event/find-events-query.dto.js';
 
 interface AuthenticatedRequest {
   user: { id: number; role: UserRole };
@@ -55,7 +56,7 @@ export class EventController {
   @Get()
   @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async findAll(
-    @Query() query: PaginationQueryDto,
+    @Query() query: FindEventsQueryDto,
     @Request() req: AuthenticatedRequest,
   ) {
     return this.findEventsUseCase.execute({

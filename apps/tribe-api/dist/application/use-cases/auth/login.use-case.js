@@ -20,7 +20,7 @@ const user_repository_interface_js_1 = require("../../../domain/repositories/use
 const hash_service_interface_js_1 = require("../../../domain/services/hash.service.interface.js");
 const auth_response_dto_js_1 = require("../../dtos/auth/auth-response.dto.js");
 const common_2 = require("@nestjs/common");
-const user_role_enum_js_1 = require("src/domain/enums/user-role.enum.js");
+const user_role_enum_js_1 = require("../../../domain/enums/user-role.enum.js");
 let LoginUseCase = LoginUseCase_1 = class LoginUseCase {
     userRepository;
     hashService;

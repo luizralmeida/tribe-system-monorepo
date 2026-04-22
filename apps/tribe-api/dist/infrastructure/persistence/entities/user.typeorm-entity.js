@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserTypeOrmEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_role_enum_js_1 = require("../../../domain/enums/user-role.enum.js");
+const user_event_typeorm_entity_js_1 = require("./user-event.typeorm-entity.js");
 let UserTypeOrmEntity = class UserTypeOrmEntity {
     id;
     name;
@@ -23,6 +24,7 @@ let UserTypeOrmEntity = class UserTypeOrmEntity {
     createdAt;
     updatedAt;
     deletedAt;
+    userEvents;
 };
 exports.UserTypeOrmEntity = UserTypeOrmEntity;
 __decorate([
@@ -65,6 +67,10 @@ __decorate([
     (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at', type: 'timestamp', nullable: true }),
     __metadata("design:type", Object)
 ], UserTypeOrmEntity.prototype, "deletedAt", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => user_event_typeorm_entity_js_1.UserEventTypeOrmEntity, (userEvent) => userEvent.user),
+    __metadata("design:type", Array)
+], UserTypeOrmEntity.prototype, "userEvents", void 0);
 exports.UserTypeOrmEntity = UserTypeOrmEntity = __decorate([
     (0, typeorm_1.Entity)('tb_user')
 ], UserTypeOrmEntity);

@@ -6,4 +6,5 @@ export declare class UpdateUserDto {
     email?: string;
     role?: UserRole;
     active?: boolean;
+    eventIds?: number[];
 }

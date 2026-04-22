@@ -20,6 +20,7 @@ const update_user_use_case_js_1 = require("../../application/use-cases/user/upda
 const delete_user_use_case_js_1 = require("../../application/use-cases/user/delete-user.use-case.js");
 const user_controller_js_1 = require("../../presentation/controllers/user.controller.js");
 const auth_module_js_1 = require("./auth.module.js");
+const event_module_js_1 = require("./event.module.js");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -28,6 +29,7 @@ exports.UserModule = UserModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_typeorm_entity_js_1.UserTypeOrmEntity]),
             (0, common_1.forwardRef)(() => auth_module_js_1.AuthModule),
+            (0, common_1.forwardRef)(() => event_module_js_1.EventModule),
         ],
         controllers: [user_controller_js_1.UserController],
         providers: [

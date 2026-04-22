@@ -10,6 +10,7 @@ export class UserResponseDto {
   readonly active: boolean;
   readonly createdAt: Date;
   readonly updatedAt: Date | null;
+  readonly eventIds?: number[];
 
   constructor(user: User) {
     this.id = user.id;
@@ -18,6 +19,7 @@ export class UserResponseDto {
     this.email = user.email;
     this.role = user.role;
     this.active = user.active;
+    this.eventIds = user.eventIds;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
   }

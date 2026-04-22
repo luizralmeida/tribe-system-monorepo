@@ -9,6 +9,7 @@ export interface User {
   active: boolean;
   createdAt: string;
   updatedAt: string | null;
+  eventIds?: number[];
 }
 
 export interface UserStats {

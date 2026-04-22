@@ -33,7 +33,7 @@ exports.EventModule = EventModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([event_typeorm_entity_js_1.EventTypeOrmEntity, user_event_typeorm_entity_js_1.UserEventTypeOrmEntity]),
-            user_module_js_1.UserModule,
+            (0, common_1.forwardRef)(() => user_module_js_1.UserModule),
             address_module_js_1.AddressModule,
         ],
         controllers: [event_controller_js_1.EventController],

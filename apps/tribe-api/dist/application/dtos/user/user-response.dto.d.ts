@@ -9,6 +9,7 @@ export declare class UserResponseDto {
     readonly active: boolean;
     readonly createdAt: Date;
     readonly updatedAt: Date | null;
+    readonly eventIds?: number[];
     constructor(user: User);
     static fromDomain(user: User): UserResponseDto;
 }

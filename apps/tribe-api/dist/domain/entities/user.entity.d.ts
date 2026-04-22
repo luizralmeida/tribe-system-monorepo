@@ -8,6 +8,7 @@ export interface UserProps {
     email: string;
     role: UserRole;
     active: boolean;
+    eventIds?: number[];
     createdAt: Date;
     updatedAt?: Date | null;
     deletedAt?: Date | null;
@@ -19,6 +20,7 @@ export declare class User extends BaseEntity {
     readonly email: string;
     readonly role: UserRole;
     readonly active: boolean;
+    readonly eventIds?: number[];
     constructor(props: UserProps);
     isSuper(): boolean;
     canEdit(): boolean;

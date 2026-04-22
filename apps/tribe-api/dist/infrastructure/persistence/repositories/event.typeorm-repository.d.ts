@@ -11,6 +11,7 @@ export declare class EventTypeOrmRepository implements IEventRepository {
     findAll(options?: {
         page: number;
         limit: number;
+        name?: string;
     }): Promise<{
         data: Event[];
         total: number;
@@ -18,6 +19,7 @@ export declare class EventTypeOrmRepository implements IEventRepository {
     findByUserId(userId: number, options?: {
         page: number;
         limit: number;
+        name?: string;
     }): Promise<{
         data: Event[];
         total: number;

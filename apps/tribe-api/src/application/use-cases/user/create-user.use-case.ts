@@ -10,6 +10,8 @@ import type { IHashService } from '../../../domain/services/hash.service.interfa
 import { HASH_SERVICE } from '../../../domain/services/hash.service.interface.js';
 import { CreateUserDto } from '../../dtos/user/create-user.dto.js';
 import { UserResponseDto } from '../../dtos/user/user-response.dto.js';
+import type { IUserEventRepository } from '../../../domain/repositories/user-event.repository.interface.js';
+import { USER_EVENT_REPOSITORY } from '../../../domain/repositories/user-event.repository.interface.js';
 
 @Injectable()
 export class CreateUserUseCase
@@ -18,6 +20,7 @@ export class CreateUserUseCase
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     @Inject(HASH_SERVICE) private readonly hashService: IHashService,
+    @Inject(USER_EVENT_REPOSITORY) private readonly userEventRepository: IUserEventRepository,
   ) {}
 
   async execute(input: CreateUserDto): Promise<UserResponseDto> {
@@ -29,6 +32,12 @@ export class CreateUserUseCase
       ...input,
       password: hashedPassword,
     });
+
+    if (input.eventIds?.length) {
+      await Promise.all(
+        input.eventIds.map((id) => this.userEventRepository.associate(user.id, id)),
+      );
+    }
 
     return UserResponseDto.fromDomain(user);
   }

@@ -9,7 +9,7 @@ import type {
 } from '../types';
 
 export const eventService = {
-  async findAll(params: PaginationParams = {}): Promise<PaginatedResponse<Event>> {
+  async findAll(params: PaginationParams & { name?: string } = {}): Promise<PaginatedResponse<Event>> {
     const { data } = await api.get('events', { params });
     return data;
   },

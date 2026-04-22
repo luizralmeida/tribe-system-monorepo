@@ -27,7 +27,7 @@ const get_event_stats_use_case_js_1 = require("../../application/use-cases/event
 const create_event_dto_js_1 = require("../../application/dtos/event/create-event.dto.js");
 const update_event_dto_js_1 = require("../../application/dtos/event/update-event.dto.js");
 const associate_user_event_dto_js_1 = require("../../application/dtos/event/associate-user-event.dto.js");
-const pagination_dto_js_1 = require("../../application/dtos/pagination.dto.js");
+const find_events_query_dto_js_1 = require("../../application/dtos/event/find-events-query.dto.js");
 let EventController = class EventController {
     createEventUseCase;
     findEventsUseCase;
@@ -106,7 +106,7 @@ __decorate([
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [pagination_dto_js_1.PaginationQueryDto, Object]),
+    __metadata("design:paramtypes", [find_events_query_dto_js_1.FindEventsQueryDto, Object]),
     __metadata("design:returntype", Promise)
 ], EventController.prototype, "findAll", null);
 __decorate([

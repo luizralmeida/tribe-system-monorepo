@@ -19,6 +19,7 @@ class CreateUserDto {
     email;
     role;
     active;
+    eventIds;
 }
 exports.CreateUserDto = CreateUserDto;
 __decorate([
@@ -53,4 +54,10 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], CreateUserDto.prototype, "active", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
+    __metadata("design:type", Array)
+], CreateUserDto.prototype, "eventIds", void 0);
 //# sourceMappingURL=create-user.dto.js.map

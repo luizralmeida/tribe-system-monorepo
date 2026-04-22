@@ -1,8 +1,11 @@
 import {
+  IsArray,
   IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -35,4 +38,9 @@ export class CreateUserDto {
 
   @IsBoolean()
   active!: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  eventIds?: number[];
 }

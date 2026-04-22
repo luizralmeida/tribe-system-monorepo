@@ -26,7 +26,10 @@ let UserTypeOrmRepository = class UserTypeOrmRepository {
         this.ormRepository = ormRepository;
     }
     async findById(id) {
-        const entity = await this.ormRepository.findOne({ where: { id } });
+        const entity = await this.ormRepository.findOne({
+            where: { id },
+            relations: ['userEvents']
+        });
         return entity ? this.toDomain(entity) : null;
     }
     async findByEmail(email) {
@@ -102,6 +105,7 @@ let UserTypeOrmRepository = class UserTypeOrmRepository {
             email: entity.email,
             role: entity.role,
             active: entity.active,
+            eventIds: entity.userEvents?.map((ue) => Number(ue.eventId)),
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
             deletedAt: entity.deletedAt,

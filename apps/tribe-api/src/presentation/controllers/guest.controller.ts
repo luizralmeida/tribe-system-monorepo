@@ -59,7 +59,7 @@ export class GuestController {
   ) {}
 
   @Get('events/:eventId/guests')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async findByEvent(
     @Param('eventId', ParseIntPipe) eventId: number,
     @Query() query: GuestFilterDto,
@@ -68,13 +68,13 @@ export class GuestController {
   }
 
   @Get('events/:eventId/guests/dashboard')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async getDashboard(@Param('eventId', ParseIntPipe) eventId: number) {
     return this.getEventDashboardUseCase.execute(eventId);
   }
 
   @Get('events/:eventId/guests/:id/companions')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async getCompanions(
     @Param('eventId', ParseIntPipe) eventId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -145,7 +145,7 @@ export class GuestController {
   }
 
   @Put('guests/:id/check-in')
-  @Roles(UserRole.SUPER, UserRole.EDIT)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.CHECKER)
   async checkIn(@Param('id', ParseIntPipe) id: number) {
     return this.checkInGuestUseCase.execute({ id });
   }

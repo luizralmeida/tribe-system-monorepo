@@ -107,7 +107,7 @@ let GuestController = class GuestController {
 exports.GuestController = GuestController;
 __decorate([
     (0, common_1.Get)('events/:eventId/guests'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('eventId', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
@@ -116,7 +116,7 @@ __decorate([
 ], GuestController.prototype, "findByEvent", null);
 __decorate([
     (0, common_1.Get)('events/:eventId/guests/dashboard'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('eventId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -124,7 +124,7 @@ __decorate([
 ], GuestController.prototype, "getDashboard", null);
 __decorate([
     (0, common_1.Get)('events/:eventId/guests/:id/companions'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('eventId', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -196,7 +196,7 @@ __decorate([
 ], GuestController.prototype, "updateStatus", null);
 __decorate([
     (0, common_1.Put)('guests/:id/check-in'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

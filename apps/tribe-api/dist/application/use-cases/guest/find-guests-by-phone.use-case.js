@@ -32,7 +32,8 @@ let FindGuestsByPhoneUseCase = class FindGuestsByPhoneUseCase {
             if (!event) {
                 return null;
             }
-            return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event, companions);
+            const guestCompanions = companions.filter((c) => c.responsibleId === guest.id);
+            return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event, guestCompanions);
         }));
         return results.filter((r) => r !== null);
     }

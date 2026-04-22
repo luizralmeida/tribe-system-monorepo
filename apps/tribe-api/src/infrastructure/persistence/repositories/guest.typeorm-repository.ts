@@ -20,7 +20,11 @@ export class GuestTypeOrmRepository implements IGuestRepository {
   ) {}
 
   async findById(id: number): Promise<Guest | null> {
-    const entity = await this.ormRepository.findOne({ where: { id } });
+    const entity = await this.ormRepository
+      .createQueryBuilder('guest')
+      .loadRelationCountAndMap('guest.companionCount', 'guest.companions')
+      .where('guest.id = :id', { id })
+      .getOne();
     return entity ? this.toDomain(entity) : null;
   }
 
@@ -71,7 +75,11 @@ export class GuestTypeOrmRepository implements IGuestRepository {
 
   async update(id: number, data: UpdateGuestData): Promise<Guest> {
     await this.ormRepository.update(id, data);
-    const updated = await this.ormRepository.findOneOrFail({ where: { id } });
+    const updated = await this.ormRepository
+      .createQueryBuilder('guest')
+      .loadRelationCountAndMap('guest.companionCount', 'guest.companions')
+      .where('guest.id = :id', { id })
+      .getOneOrFail();
     return this.toDomain(updated);
   }
 

@@ -29,8 +29,8 @@ export class FindGuestsByPhoneUseCase
         if (!event) {
            return null;
         }
-
-        return GuestEventResponseDto.fromDomainWithEvent(guest, event, companions);
+        const guestCompanions = companions.filter((c) => c.responsibleId === guest.id);
+        return GuestEventResponseDto.fromDomainWithEvent(guest, event, guestCompanions);
       }),
     );
 

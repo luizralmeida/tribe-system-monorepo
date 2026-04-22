@@ -53,7 +53,7 @@ export class EventController {
   }
 
   @Get()
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async findAll(
     @Query() query: PaginationQueryDto,
     @Request() req: AuthenticatedRequest,
@@ -66,7 +66,7 @@ export class EventController {
   }
 
   @Get('stats')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async getStats(@Request() req: AuthenticatedRequest) {
     return this.getEventStatsUseCase.execute({
       userId: req.user.id,
@@ -75,7 +75,7 @@ export class EventController {
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW)
+  @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER)
   async findById(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: AuthenticatedRequest,

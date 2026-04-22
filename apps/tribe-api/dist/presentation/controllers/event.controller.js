@@ -102,7 +102,7 @@ __decorate([
 ], EventController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -111,7 +111,7 @@ __decorate([
 ], EventController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('stats'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -119,7 +119,7 @@ __decorate([
 ], EventController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW),
+    (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.VIEW, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),

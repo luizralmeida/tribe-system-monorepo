@@ -1,5 +1,6 @@
 export declare enum UserRole {
     SUPER = "SUPER",
     EDIT = "EDIT",
-    VIEW = "VIEW"
+    VIEW = "VIEW",
+    CHECKER = "CHECKER"
 }

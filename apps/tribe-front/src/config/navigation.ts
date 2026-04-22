@@ -14,7 +14,7 @@ export const navigationConfig: NavigationItem[] = [
     name: 'Eventos',
     route: 'dashboard',
     icon: LayoutDashboard,
-    roles: [UserRole.SUPER, UserRole.EDIT, UserRole.VIEW], // All roles
+    roles: [UserRole.SUPER, UserRole.EDIT, UserRole.VIEW, UserRole.CHECKER], // All roles
   },
   {
     name: 'Usuários',

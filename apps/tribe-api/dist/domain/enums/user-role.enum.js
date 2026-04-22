@@ -6,5 +6,6 @@ var UserRole;
     UserRole["SUPER"] = "SUPER";
     UserRole["EDIT"] = "EDIT";
     UserRole["VIEW"] = "VIEW";
+    UserRole["CHECKER"] = "CHECKER";
 })(UserRole || (exports.UserRole = UserRole = {}));
 //# sourceMappingURL=user-role.enum.js.map

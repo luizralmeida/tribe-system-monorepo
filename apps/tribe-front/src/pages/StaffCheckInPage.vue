@@ -56,17 +56,22 @@ const formatDate = (dateStr: string) => {
     year: 'numeric'
   });
 };
+
+const formatAddress = (address?: GuestEvent['event']['address']) => {
+  if (!address) return 'Local não informado';
+  return `${address.street}, ${address.number} - ${address.neighborhood}, ${address.city} - ${address.state}`;
+};
 </script>
 
 <template>
   <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center">
     <div class="w-full max-w-2xl space-y-8">
       <button 
-        @click="router.push({ name: 'adminDashboard' })"
+        @click="guest ? router.push({ name: 'eventDashboard', params: { id: guest.event.id } }) : router.back()"
         class="flex items-center gap-2 text-slate-500 hover:text-primary-600 transition-colors group"
       >
         <ArrowLeft class="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span class="font-medium">Painel Administrativo</span>
+        <span class="font-medium">Voltar ao Evento</span>
       </button>
 
       <div class="space-y-2">
@@ -99,7 +104,10 @@ const formatDate = (dateStr: string) => {
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Entrada Confirmada!</h2>
             <p class="text-slate-500 dark:text-slate-400">O check-in de <strong>{{ guest.name }}</strong> foi realizado com sucesso.</p>
           </div>
-          <button @click="router.push({ name: 'adminDashboard' })" class="w-full py-4 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 font-bold rounded-2xl hover:opacity-90 transition-all">
+          <button 
+            @click="router.push({ name: 'eventDashboard', params: { id: guest.event.id } })" 
+            class="w-full py-4 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 font-bold rounded-2xl hover:opacity-90 transition-all"
+          >
             Voltar ao Dashboard
           </button>
         </div>
@@ -127,9 +135,12 @@ const formatDate = (dateStr: string) => {
                 <Calendar class="w-5 h-5 text-primary-600" />
                 <span class="font-bold text-slate-900 dark:text-white">{{ guest.event.name }}</span>
               </div>
-              <div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 text-sm">
-                <MapPin class="w-5 h-5 text-primary-600" />
-                <span>{{ formatDate(guest.event.date) }}</span>
+              <div class="flex items-start gap-3 text-slate-500 dark:text-slate-400 text-sm">
+                <MapPin class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" />
+                <div class="space-y-1">
+                  <p class="font-medium leading-tight">{{ formatAddress(guest.event.address) }}</p>
+                  <p class="text-xs opacity-70">{{ formatDate(guest.event.date) }}</p>
+                </div>
               </div>
             </div>
 

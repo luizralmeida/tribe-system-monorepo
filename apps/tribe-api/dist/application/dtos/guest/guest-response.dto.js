@@ -27,7 +27,7 @@ class GuestResponseDto {
         this.email = guest.email;
         this.responsibleId = guest.responsibleId || null;
         this.isChild = guest.isChild;
-        this.companionCount = companions?.length || 0;
+        this.companionCount = companions?.length || guest.companionCount || 0;
         this.age = guest.age || null;
         this.qrCode = qrCode;
         this.createdAt = guest.createdAt;

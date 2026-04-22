@@ -14,18 +14,25 @@ import {
   Users,
   QrCode,
   Phone,
-  Mail
+  Mail,
+  Camera
 } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 import { eventService } from '../services/event.service';
 import { guestService } from '../services/guest.service';
+import { useAuthStore } from '../store/auth';
+import { UserRole } from '../types/enums';
 import GuestFormModal from '../components/GuestFormModal.vue';
 import CompanionsListModal from '../components/CompanionsListModal.vue';
 import ConfirmationModal from '../components/ConfirmationModal.vue';
 import QRCodeModal from '../components/QRCodeModal.vue';
+import QrScanner from '../components/QrScanner.vue';
 import type { Event, Guest, EventDashboardStats } from '../types';
 import { GuestStatus } from '../types';
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 const eventId = Number(route.params.id);
 const event = ref<Event | null>(null);
 const stats = ref<EventDashboardStats | null>(null);
@@ -37,6 +44,16 @@ const showGuestModal = ref(false);
 const selectedGuest = ref<Guest | null>(null);
 const showCompanionsModal = ref(false);
 const selectedGuestForCompanions = ref<Guest | null>(null);
+const showScanner = ref(false);
+const isMobile = ref(false);
+
+const checkIsMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+};
+
+const canPerformCheckIn = authStore.user?.role === UserRole.SUPER || 
+                         authStore.user?.role === UserRole.EDIT || 
+                         authStore.user?.role === UserRole.CHECKER;
 
 // Confirmation Modal State
 const showConfirmModal = ref(false);
@@ -148,9 +165,23 @@ const handleDeleteGuest = async (guest: Guest) => {
 
 onMounted(async () => {
   isLoading.value = true;
+  checkIsMobile();
+  window.addEventListener('resize', checkIsMobile);
   await fetchData();
   isLoading.value = false;
 });
+
+const onQrScan = (data: string) => {
+  // Expected format: some URL or just the ID
+  // For now let's assume it's the ID or a link like /admin/check-in/:id
+  const match = data.match(/\/check-in\/(\d+)/);
+  const id = match ? match[1] : data;
+  
+  if (id) {
+    showScanner.value = false;
+    router.push({ name: 'staffCheckIn', params: { id } });
+  }
+};
 </script>
 
 <template>
@@ -382,6 +413,22 @@ onMounted(async () => {
       v-if="showQRCodeModal && qrCodeGuestId"
       :guest-id="qrCodeGuestId"
       @close="showQRCodeModal = false; qrCodeGuestId = null"
+    />
+
+    <!-- Mobile Camera FAB -->
+    <button 
+      v-if="isMobile && canPerformCheckIn"
+      @click="showScanner = true"
+      class="fixed bottom-8 right-8 w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary-500/40 active:scale-95 transition-all z-40"
+    >
+      <Camera class="w-8 h-8" />
+    </button>
+
+    <!-- Scanner Overlay -->
+    <QrScanner 
+      v-if="showScanner"
+      :on-scan="onQrScan"
+      :on-close="() => showScanner = false"
     />
   </div>
 </template>

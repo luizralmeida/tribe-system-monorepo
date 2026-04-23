@@ -64,3 +64,39 @@ body {
   @apply rounded-full bg-slate-300 hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700;
   transition: background-color 0.2s;
 }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.5; filter: blur(20px); }
+  50% { opacity: 0.8; filter: blur(30px); }
+}
+
+@keyframes background-pan {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 4s ease-in-out infinite;
+}
+
+.animate-bg-pan {
+  animation: background-pan 10s linear infinite;
+  background-size: 200% 200%;
+}
+
+.glass {
+  @apply bg-white/10 backdrop-blur-xl border border-white/20 dark:bg-slate-900/40 dark:border-slate-800/50;
+}
+
+.glass-card {
+  @apply bg-white/10 backdrop-blur-xl border border-white/20 dark:bg-slate-900/40 dark:border-slate-800/50 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300;
+}

@@ -37,6 +37,20 @@ let CreateGuestUseCase = class CreateGuestUseCase {
             isChild: input.data.isChild,
             age: input.data.age,
         });
+        if (input.data.companions && input.data.companions.length > 0) {
+            const companionsData = input.data.companions.map((c) => ({
+                name: c.name,
+                phone: c.phone || input.data.phone,
+                email: c.email || input.data.email,
+                status: guest_status_enum_js_1.GuestStatus.NOT_CONFIRMED,
+                attended: false,
+                eventId: input.eventId,
+                responsibleId: guest.id,
+                isChild: c.isChild,
+                age: c.age,
+            }));
+            await this.guestRepository.saveBulk(companionsData);
+        }
         return guest_response_dto_js_1.GuestResponseDto.fromDomain(guest);
     }
     async validateResponsible(responsibleId, eventId) {

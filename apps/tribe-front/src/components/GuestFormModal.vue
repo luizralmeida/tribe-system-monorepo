@@ -29,7 +29,8 @@ const form = ref({
   name: '',
   phone: '',
   email: '',
-  companions: [] as Array<{ name: string; phone?: string; email?: string; age?: number }>
+  isChild: false,
+  companions: [] as Array<{ name: string; phone?: string; email?: string; age?: number; isChild: boolean }>
 });
 
 const isLoading = ref(false);
@@ -42,6 +43,7 @@ onMounted(async () => {
       name: props.guest.name,
       phone: props.guest.phone || '',
       email: props.guest.email || '',
+      isChild: props.guest.isChild || false,
       companions: []
     };
     
@@ -51,7 +53,8 @@ onMounted(async () => {
         name: c.name,
         age: c.age,
         phone: c.phone,
-        email: c.email
+        email: c.email,
+        isChild: c.isChild || false
       }));
     } catch (err) {
       console.error('Failed to fetch companions', err);
@@ -60,7 +63,7 @@ onMounted(async () => {
 });
 
 const addCompanion = () => {
-  form.value.companions.push({ name: '', phone: form.value.phone, email: form.value.email });
+  form.value.companions.push({ name: '', phone: form.value.phone, email: form.value.email, isChild: true });
 };
 
 const removeCompanion = (index: number) => {
@@ -87,6 +90,7 @@ const handleSubmit = async () => {
       name: form.value.name,
       phone: form.value.phone,
       email: form.value.email,
+      isChild: form.value.isChild,
     };
 
     if (isEdit.value && props.guest) {
@@ -169,6 +173,33 @@ const handleSubmit = async () => {
                     <input v-model="form.email" type="email" placeholder="contato@exemplo.com" class="input-premium pl-12" />
                   </div>
                 </div>
+
+                <!-- isChild (Primary) -->
+                <div class="md:col-span-2">
+                  <div 
+                    @click="form.isChild = !form.isChild"
+                    :class="[
+                      'p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group',
+                      form.isChild ? 'bg-primary-500/5 border-primary-500/20' : 'bg-slate-50 dark:bg-white/5 border-transparent hover:border-slate-200 dark:hover:border-white/10'
+                    ]"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div :class="[
+                        'w-5 h-5 rounded-lg border flex items-center justify-center transition-all',
+                        form.isChild ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white dark:bg-white/10 border-slate-200 dark:border-white/10'
+                      ]">
+                        <CheckCircle2 v-if="form.isChild" class="w-3 h-3" />
+                      </div>
+                      <div class="flex flex-col">
+                        <span :class="[
+                          'text-xs font-bold transition-colors',
+                          form.isChild ? 'text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400'
+                        ]">Criança não pagante</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Marque se o titular for uma criança (não pagante)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -195,6 +226,32 @@ const handleSubmit = async () => {
                     <div>
                       <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">Idade (opcional)</label>
                       <input v-model="companion.age" type="number" placeholder="0" class="input-premium" />
+                    </div>
+
+                    <!-- isChild (Companion) -->
+                    <div class="md:col-span-2">
+                      <div 
+                        @click="companion.isChild = !companion.isChild"
+                        :class="[
+                          'p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group',
+                          companion.isChild ? 'bg-primary-500/5 border-primary-500/20' : 'bg-slate-50 dark:bg-white/5 border-transparent hover:border-slate-200 dark:hover:border-white/10'
+                        ]"
+                      >
+                        <div class="flex items-center gap-3">
+                          <div :class="[
+                            'w-5 h-5 rounded-lg border flex items-center justify-center transition-all',
+                            companion.isChild ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white dark:bg-white/10 border-slate-200 dark:border-white/10'
+                          ]">
+                            <CheckCircle2 v-if="companion.isChild" class="w-3 h-3" />
+                          </div>
+                          <div class="flex flex-col">
+                            <span :class="[
+                              'text-xs font-bold transition-colors',
+                              companion.isChild ? 'text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400'
+                            ]">Criança não pagante</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

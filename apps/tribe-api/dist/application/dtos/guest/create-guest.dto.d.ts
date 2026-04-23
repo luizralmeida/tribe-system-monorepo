@@ -7,4 +7,5 @@ export declare class CreateGuestDto {
     isChild: boolean;
     responsibleId?: number;
     age?: number;
+    companions?: CreateGuestDto[];
 }

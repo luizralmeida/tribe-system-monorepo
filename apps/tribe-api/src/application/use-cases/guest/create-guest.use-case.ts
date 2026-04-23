@@ -36,6 +36,21 @@ export class CreateGuestUseCase
       age: input.data.age,
     });
 
+    if (input.data.companions && input.data.companions.length > 0) {
+      const companionsData = input.data.companions.map((c) => ({
+        name: c.name,
+        phone: c.phone || input.data.phone,
+        email: c.email || input.data.email,
+        status: GuestStatus.NOT_CONFIRMED,
+        attended: false,
+        eventId: input.eventId,
+        responsibleId: guest.id,
+        isChild: c.isChild,
+        age: c.age,
+      }));
+      await this.guestRepository.saveBulk(companionsData);
+    }
+
     return GuestResponseDto.fromDomain(guest);
   }
 

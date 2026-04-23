@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { GuestStatus } from '../../../domain/enums/guest-status.enum.js';
@@ -43,4 +44,9 @@ export class CreateGuestDto {
   @IsNumber()
   @Type(() => Number)
   age?: number;
+
+  @IsOptional()
+  @Type(() => CreateGuestDto)
+  @ValidateNested({ each: true })
+  companions?: CreateGuestDto[];
 }

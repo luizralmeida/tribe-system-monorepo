@@ -90,67 +90,113 @@ onMounted(async () => {
         <p class="text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-xs">Nenhum administrador encontrado</p>
       </div>
 
-      <div v-else class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-50/50 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.1em]">
-              <th class="px-8 py-5">Colaborador</th>
-              <th class="px-8 py-5">E-mail</th>
-              <th class="px-8 py-5">Nível de Acesso</th>
-              <th class="px-8 py-5 text-right">Controles</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-            <tr v-for="user in users" :key="user.id" class="group hover:bg-slate-100/50 dark:hover:bg-white/5 transition-colors">
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-primary-600/5 flex items-center justify-center text-primary-600 font-black">
-                     {{ user.name.charAt(0) }}
+      <div v-else>
+        <!-- Table for Desktop -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/50 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.1em]">
+                <th class="px-8 py-5">Colaborador</th>
+                <th class="px-8 py-5">E-mail</th>
+                <th class="px-8 py-5">Nível de Acesso</th>
+                <th class="px-8 py-5 text-right">Controles</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+              <tr v-for="user in users" :key="user.id" class="group hover:bg-slate-100/50 dark:hover:bg-white/5 transition-colors">
+                <td class="px-8 py-6">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-600/5 flex items-center justify-center text-primary-600 font-black">
+                       {{ user.name.charAt(0) }}
+                    </div>
+                    <p class="font-black text-slate-900 dark:text-white text-lg tracking-tight">{{ user.name }}</p>
                   </div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium">
+                    <Mail class="w-4 h-4" />
+                    {{ user.email }}
+                  </div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="flex items-center gap-2">
+                    <Shield :class="[
+                      'w-4 h-4',
+                      user.role === 'SUPER' ? 'text-primary-600' : 'text-slate-400'
+                    ]" />
+                    <span :class="[
+                      'text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border',
+                      user.role === 'SUPER' ? 'bg-primary-500/10 text-primary-600 border-primary-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
+                    ]">
+                      {{ user.role }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-8 py-6 text-right">
+                  <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      @click="handleEdit(user)"
+                      class="p-2.5 text-slate-400 hover:text-primary-600 hover:bg-primary-600/10 rounded-xl transition-all"
+                      title="Editar"
+                    >
+                      <Pencil class="w-4 h-4" />
+                    </button>
+                    <button 
+                      @click="handleDelete(user.id)"
+                      class="p-2.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
+                      title="Remover"
+                    >
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Card List for Mobile -->
+        <div class="md:hidden divide-y divide-slate-100 dark:divide-white/5">
+          <div v-for="user in users" :key="user.id" class="p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-primary-600/5 flex items-center justify-center text-primary-600 font-black">
+                  {{ user.name.charAt(0) }}
+                </div>
+                <div>
                   <p class="font-black text-slate-900 dark:text-white text-lg tracking-tight">{{ user.name }}</p>
+                  <p class="text-xs font-medium text-slate-500 flex items-center gap-1.5 mt-0.5">
+                    <Mail class="w-3 h-3" /> {{ user.email }}
+                  </p>
                 </div>
-              </td>
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium">
-                  <Mail class="w-4 h-4" />
-                  {{ user.email }}
-                </div>
-              </td>
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-2">
-                  <Shield :class="[
-                    'w-4 h-4',
-                    user.role === 'SUPER' ? 'text-primary-600' : 'text-slate-400'
-                  ]" />
-                  <span :class="[
-                    'text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border',
-                    user.role === 'SUPER' ? 'bg-primary-500/10 text-primary-600 border-primary-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
-                  ]">
-                    {{ user.role }}
-                  </span>
-                </div>
-              </td>
-              <td class="px-8 py-6 text-right">
-                <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    @click="handleEdit(user)"
-                    class="p-2.5 text-slate-400 hover:text-primary-600 hover:bg-primary-600/10 rounded-xl transition-all"
-                    title="Editar"
-                  >
-                    <Pencil class="w-4 h-4" />
-                  </button>
-                  <button 
-                    @click="handleDelete(user.id)"
-                    class="p-2.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
-                    title="Remover"
-                  >
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-2">
+                <Shield :class="[
+                  'w-3.5 h-3.5',
+                  user.role === 'SUPER' ? 'text-primary-600' : 'text-slate-400'
+                ]" />
+                <span :class="[
+                  'text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border',
+                  user.role === 'SUPER' ? 'bg-primary-500/10 text-primary-600 border-primary-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
+                ]">
+                  {{ user.role }}
+                </span>
+              </div>
+
+              <div class="flex gap-2">
+                <button @click="handleEdit(user)" class="p-2.5 text-slate-400 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5">
+                  <Pencil class="w-4 h-4" />
+                </button>
+                <button @click="handleDelete(user.id)" class="p-2.5 text-slate-400 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5">
+                  <Trash2 class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -5,7 +5,7 @@ import { ref } from 'vue';
 import ThemeToggle from '../components/ThemeToggle.vue';
 import { navigationConfig } from '../config/navigation';
 import { computed } from 'vue';
-import fullLogo from '@/assets/full-logo.svg';
+import horizontalFullLogo from '@/assets/horizontal-full-logo.svg';
 
 const authStore = useAuthStore();
 const isSidebarOpen = ref(false);
@@ -33,7 +33,7 @@ const navItems = computed(() => {
     >
       <div class="h-full flex flex-col">
         <div class="p-8 flex items-center justify-between">
-          <img :src="fullLogo" alt="Presença VIP" class="h-9 w-auto" />
+          <img :src="horizontalFullLogo" alt="Presença VIP" class="h-9 w-auto" />
           <button @click="toggleSidebar" class="lg:hidden p-2 text-slate-500 hover:text-primary-600 transition-colors">
             <X class="w-6 h-6" />
           </button>
@@ -88,7 +88,7 @@ const navItems = computed(() => {
         </button>
         
         <div class="flex items-center gap-2 lg:hidden">
-            <img :src="fullLogo" alt="Presença VIP" class="h-7 w-auto" />
+            <img :src="horizontalFullLogo" alt="Presença VIP" class="h-7 w-auto" />
         </div>
 
         <div class="hidden lg:block text-slate-400 text-sm font-medium italic">

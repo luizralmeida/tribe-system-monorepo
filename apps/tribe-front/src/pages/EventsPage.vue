@@ -97,39 +97,21 @@ onMounted(async () => {
       </button>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
-        <div class="flex items-center gap-5">
-          <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 transition-transform group-hover:scale-110">
-            <LayoutGrid class="w-7 h-7" />
-          </div>
-          <div>
-            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Total de Eventos</p>
-            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.total || 0 }}</p>
-          </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      <div v-for="(stat, idx) in [
+        { label: 'Total de Eventos', value: stats?.total || 0, icon: LayoutGrid, color: 'text-blue-600 bg-blue-500/10' },
+        { label: 'Eventos Concluídos', value: stats?.completed || 0, icon: CalendarCheck, color: 'text-emerald-600 bg-emerald-500/10' },
+        { label: 'Próximos Eventos', value: stats?.future || 0, icon: CalendarClock, color: 'text-amber-600 bg-amber-500/10' }
+      ]" :key="idx" :class="[
+        'glass-card p-6 md:p-8 group border border-white/10 dark:border-white/5 flex flex-row md:flex-col md:items-start items-center gap-5',
+        idx === 2 ? 'col-span-2 md:col-span-1' : ''
+      ]">
+        <div :class="[stat.color, 'w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0']">
+          <component :is="stat.icon" class="w-7 h-7" />
         </div>
-      </div>
-      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
-        <div class="flex items-center gap-5">
-          <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 transition-transform group-hover:scale-110">
-            <CalendarCheck class="w-7 h-7" />
-          </div>
-          <div>
-            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Eventos Concluídos</p>
-            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.completed || 0 }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
-        <div class="flex items-center gap-5">
-          <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 transition-transform group-hover:scale-110">
-            <CalendarClock class="w-7 h-7" />
-          </div>
-          <div>
-            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Próximos Eventos</p>
-            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.future || 0 }}</p>
-          </div>
+        <div>
+          <p class="text-xs font-black uppercase tracking-widest text-slate-400">{{ stat.label }}</p>
+          <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stat.value }}</p>
         </div>
       </div>
     </div>

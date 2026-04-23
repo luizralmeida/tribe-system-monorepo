@@ -84,11 +84,11 @@ const handleSubmit = async () => {
   <div class="fixed inset-0 z-[100] flex items-center justify-center p-6 overflow-y-auto">
     <div class="fixed inset-0 bg-slate-950/40 backdrop-blur-md" @click="emit('close')"></div>
     
-    <div class="w-full max-w-2xl relative animate-in fade-in zoom-in slide-in-from-bottom-4 duration-500">
-      <div class="glass-card overflow-hidden border border-white/10 dark:border-white/5 shadow-3xl bg-white/90 dark:bg-[#020617]/90 backdrop-blur-2xl rounded-[2.5rem]">
+    <div class="w-full max-w-2xl max-h-[90vh] relative animate-in fade-in zoom-in slide-in-from-bottom-4 duration-500 flex flex-col">
+      <div class="glass-card overflow-hidden border border-white/10 dark:border-white/5 shadow-3xl bg-white/90 dark:bg-[#020617]/90 backdrop-blur-2xl rounded-[2.5rem] flex flex-col max-h-full">
         
         <!-- Header -->
-        <div class="p-8 pb-0 flex items-center justify-between">
+        <div class="p-8 pb-4 flex items-center justify-between shrink-0">
           <div class="flex items-center gap-4">
              <div class="w-12 h-12 rounded-2xl bg-primary-600/10 flex items-center justify-center text-primary-600">
                 <CalendarPlus class="w-6 h-6" />
@@ -104,8 +104,8 @@ const handleSubmit = async () => {
         </div>
 
         <!-- Form Content -->
-        <div class="p-8">
-          <form @submit.prevent="handleSubmit" class="space-y-10">
+        <div class="p-8 pt-0 overflow-y-auto custom-scrollbar">
+          <form @submit.prevent="handleSubmit" id="eventForm" class="space-y-10">
             <div class="space-y-6">
               <!-- Name & Date -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -165,28 +165,29 @@ const handleSubmit = async () => {
             <div v-if="error" class="text-danger text-sm font-bold text-center bg-danger/10 p-4 rounded-2xl animate-shake">
               {{ error }}
             </div>
-
-            <!-- Footer Actions -->
-            <div class="flex gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
-              <button 
-                @click="emit('close')" 
-                type="button"
-                class="flex-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-black tracking-tight hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
-              >
-                 Cancelar
-              </button>
-
-              <button 
-                type="submit" 
-                :disabled="isLoading"
-                class="flex-2 btn-primary py-4 text-lg flex items-center justify-center gap-3"
-              >
-                <CheckCircle2 v-if="!isLoading" class="w-5 h-5" />
-                <div v-else class="animate-spin rounded-full h-5 w-5 border-t-2 border-white"></div>
-                <span>{{ isLoading ? 'Salvando...' : (event ? 'Salvar Alterações' : 'Confirmar Criação') }}</span>
-              </button>
-            </div>
           </form>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="p-8 pt-4 border-t border-slate-100 dark:border-white/5 bg-white/50 dark:bg-slate-950/20 backdrop-blur-xl shrink-0 flex gap-4">
+          <button 
+            @click="emit('close')" 
+            type="button"
+            class="flex-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-black tracking-tight hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+          >
+             Cancelar
+          </button>
+
+          <button 
+            form="eventForm"
+            type="submit" 
+            :disabled="isLoading"
+            class="flex-2 btn-primary py-4 text-lg flex items-center justify-center gap-3"
+          >
+            <CheckCircle2 v-if="!isLoading" class="w-5 h-5" />
+            <div v-else class="animate-spin rounded-full h-5 w-5 border-t-2 border-white"></div>
+            <span>{{ isLoading ? 'Salvando...' : (event ? 'Salvar' : 'Confirmar') }}</span>
+          </button>
         </div>
       </div>
     </div>

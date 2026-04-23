@@ -111,7 +111,7 @@ const goBack = () => {
       </div>
 
       <p class="mt-12 text-center text-slate-500 text-sm font-medium">
-        Problemas com seu acesso? <a href="#" class="text-primary-600 font-bold hover:underline">Fale com o suporte.</a>
+        Problemas com seu acesso? <a href="https://wa.me/5531991967276" target="_blank" class="text-primary-600 font-bold hover:underline">Fale com o suporte.</a>
       </p>
     </div>
   </div>

@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
     token: localStorage.getItem('token') || null,
+    isInitialLoading: true,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -32,12 +33,17 @@ export const useAuthStore = defineStore('auth', {
       window.location.href = '/login';
     },
     async fetchProfile() {
-      if (!this.token) return;
+      if (!this.token) {
+        this.isInitialLoading = false;
+        return;
+      }
       try {
-        const { data } = await api.get('auth/profile');
+        const { data } = await api.get('auth/me');
         this.user = data;
       } catch (error) {
         this.logout();
+      } finally {
+        this.isInitialLoading = false;
       }
     },
   },

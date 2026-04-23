@@ -5,9 +5,7 @@ import { useAuthStore } from './store/auth';
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  if (authStore.isAuthenticated) {
-    await authStore.fetchProfile();
-  }
+  await authStore.fetchProfile();
 });
 </script>
 

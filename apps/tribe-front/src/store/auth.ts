@@ -19,6 +19,7 @@ export const useAuthStore = defineStore('auth', {
         const { data } = await api.post('auth/login', credentials);
         this.token = data.accessToken;
         this.user = data.user;
+        this.isInitialLoading = false;
         localStorage.setItem('token', data.accessToken);
         return true;
       } catch (error) {

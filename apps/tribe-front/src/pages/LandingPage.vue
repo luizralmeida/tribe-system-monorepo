@@ -13,7 +13,7 @@ import {
   CheckCircle2,
   Ticket
 } from 'lucide-vue-next';
-import fullLogo from '@/assets/full-logo.svg';
+import horizontalFullLogo from '@/assets/horizontal-full-logo.svg';
 
 const router = useRouter();
 
@@ -53,7 +53,7 @@ const features = [
   },
   { 
     title: 'Segurança de Elite', 
-    desc: 'Controle de acesso granular (RBAC) para produtores e checkers.', 
+    desc: 'Controle de acesso por permissão para produtores e checkers.', 
     icon: ShieldCheck 
   }
 ];
@@ -72,7 +72,7 @@ const audiences = [
     <nav class="fixed top-0 w-full z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/5">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div class="flex items-center group cursor-pointer">
-          <img :src="fullLogo" alt="Presença VIP" class="h-10 w-auto transition-transform group-hover:scale-105" />
+          <img :src="horizontalFullLogo" alt="Presença VIP" class="h-10 w-auto transition-transform group-hover:scale-105" />
         </div>
 
         <div class="flex items-center gap-6">
@@ -250,7 +250,7 @@ const audiences = [
     <!-- Footer -->
     <footer class="py-12 px-6 border-t border-white/5 text-center">
       <div class="max-w-7xl mx-auto">
-        <img :src="fullLogo" alt="Presença VIP" class="h-8 w-auto mx-auto mb-8 opacity-50 grayscale hover:grayscale-0 transition-all" />
+        <img :src="horizontalFullLogo" alt="Presença VIP" class="h-8 w-auto mx-auto mb-8 opacity-50 grayscale hover:grayscale-0 transition-all" />
         <p class="text-slate-600 text-sm">&copy; 2026 Presença VIP. Todos os direitos reservados.</p>
       </div>
     </footer>

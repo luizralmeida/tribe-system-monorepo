@@ -186,7 +186,7 @@ const copyLink = () => {
               </div>
 
               <!-- Address (Only in parent/main card or for better UX) -->
-              <div v-if="guest.event.address" class="flex flex-col items-center gap-2 text-slate-600 dark:text-slate-400 pt-4">
+              <div v-if="guest.event.address" class="flex flex-col items-center gap-2 text-slate-600 dark:text-slate-400 pt-4 animate-in fade-in zoom-in duration-700">
                 <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-1">
                   <MapPin class="w-5 h-5 text-primary-600" />
                 </div>
@@ -200,7 +200,7 @@ const copyLink = () => {
                 <div class="grid grid-cols-2 gap-4">
                   <button 
                     @click="handleRSVP('CONFIRMED')"
-                    class="flex flex-col items-center gap-2 p-5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black rounded-3xl border-2 border-transparent hover:border-emerald-500 transition-all text-sm"
+                    class="btn-primary flex flex-col items-center gap-2 p-5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black rounded-3xl border-2 border-transparent hover:border-emerald-500 transition-all text-sm"
                   >
                     <CheckCircle2 class="w-6 h-6" />
                     Confirmar

@@ -14,7 +14,6 @@ import {
   Users,
   QrCode,
   Phone,
-  Mail,
   Camera
 } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
@@ -172,8 +171,6 @@ onMounted(async () => {
 });
 
 const onQrScan = (data: string) => {
-  // Expected format: some URL or just the ID
-  // For now let's assume it's the ID or a link like /admin/check-in/:id
   const match = data.match(/\/check-in\/(\d+)/);
   const id = match ? match[1] : data;
   
@@ -185,192 +182,181 @@ const onQrScan = (data: string) => {
 </script>
 
 <template>
-  <div class="space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
+  <div class="space-y-10">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div class="flex items-center gap-6">
         <router-link 
           to="/events" 
-          class="p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-slate-500 hover:text-primary-600 transition-colors shadow-sm"
+          class="p-4 glass rounded-2xl text-slate-500 hover:text-primary-600 transition-all hover:scale-105"
         >
           <ChevronLeft class="w-6 h-6" />
         </router-link>
-        <div>
-          <h2 class="text-3xl font-bold text-slate-800 dark:text-white">
-            {{ event ? event.name : `Dashboard do Evento ${eventId}` }}
+        <div class="space-y-1">
+          <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            {{ event ? event.name : `Dashboard` }}
           </h2>
-          <p class="text-slate-500 dark:text-slate-400 mt-1">Gerencie a lista de convidados e acompanhe as confirmações.</p>
+          <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Gerenciamento VIP de convidados e presença.</p>
         </div>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mb-2">
-          <Users class="w-5 h-5" />
-          <p class="font-medium">Total</p>
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div v-for="(stat, idx) in [
+        { label: 'Total', value: stats?.total || 0, icon: Users, color: 'text-slate-500 bg-slate-500/10' },
+        { label: 'Confirmados', value: stats?.confirmed || 0, icon: CheckCircle2, color: 'text-emerald-500 bg-emerald-500/10' },
+        { label: 'Pendentes', value: stats?.notConfirmed || 0, icon: XCircle, color: 'text-amber-500 bg-amber-500/10' },
+        { label: 'Presentes', value: stats?.attended || 0, icon: UserCheck, color: 'text-primary-500 bg-primary-500/10' },
+        { label: 'Isentos', value: stats?.nonPayingChildrenCount || 0, icon: Baby, color: 'text-pink-500 bg-pink-500/10' }
+      ]" :key="idx" class="glass-card p-6 border border-white/10 dark:border-white/5 group">
+        <div class="flex flex-col gap-4">
+          <div :class="[stat.color, 'w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110']">
+            <component :is="stat.icon" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">{{ stat.label }}</p>
+            <p class="text-3xl font-black text-slate-900 dark:text-white">{{ stat.value }}</p>
+          </div>
         </div>
-        <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.total || 0 }}</p>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-3 text-green-600 dark:text-green-400 mb-2">
-          <CheckCircle2 class="w-5 h-5" />
-          <p class="font-medium">Confirmados</p>
-        </div>
-        <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.confirmed || 0 }}</p>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-3 text-amber-600 dark:text-amber-400 mb-2">
-          <XCircle class="w-5 h-5" />
-          <p class="font-medium">Pendente</p>
-        </div>
-        <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.notConfirmed || 0 }}</p>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-3 text-primary-600 dark:text-primary-400 mb-2">
-          <UserCheck class="w-5 h-5" />
-          <p class="font-medium">Presentes</p>
-        </div>
-        <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.attended || 0 }}</p>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-3 text-pink-600 dark:text-pink-400 mb-2">
-          <Baby class="w-5 h-5" />
-          <p class="font-medium">Crianças não pagantes</p>
-        </div>
-        <p class="text-3xl font-bold text-slate-800 dark:text-white">{{ stats?.nonPayingChildrenCount || 0 }}</p>
       </div>
     </div>
 
-    <!-- Guests List -->
-    <div class="space-y-4">
-      <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row gap-4 items-center">
-        <div class="relative flex-1 w-full">
-          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+    <!-- Main Content Area -->
+    <div class="space-y-6">
+      <!-- Search & Add Actions -->
+      <div class="glass border border-white/10 dark:border-white/5 p-4 rounded-3xl flex flex-col sm:flex-row gap-6 items-center">
+        <div class="relative flex-1 w-full group">
+          <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
           <input
             v-model="searchQuery"
             @input="fetchData"
             type="text"
-            placeholder="Buscar convidado..."
-            class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-xl outline-none focus:ring-2 focus:ring-primary-500 transition-all text-slate-700 dark:text-slate-200"
+            placeholder="Buscar convidado por nome..."
+            class="input-premium pl-12 bg-transparent border-none focus:ring-0"
           />
         </div>
-        <div class="flex items-center gap-2">
-          <button 
-            @click="showGuestModal = true"
-            class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-xl font-bold transition-all flex items-center gap-2"
-          >
-            <Plus class="w-5 h-5" />
-            Adicionar Convidado
-          </button>
-        </div>
+        <button 
+          @click="showGuestModal = true"
+          class="btn-primary flex items-center gap-2 whitespace-nowrap w-full sm:w-auto justify-center"
+        >
+          <Plus class="w-5 h-5" />
+          <span>Novo Convidado</span>
+        </button>
       </div>
 
-      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
-        <div v-if="isLoading" class="flex justify-center py-12">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <!-- Guest Table Card -->
+      <div class="glass-card overflow-hidden border border-white/10 dark:border-white/5">
+        <div v-if="isLoading" class="flex justify-center py-20">
+           <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-primary-600 border-r-transparent"></div>
         </div>
         
-        <div v-else-if="hasError" class="text-center py-12 px-6">
-          <div class="bg-red-50 dark:bg-red-900/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <XCircle class="w-8 h-8 text-red-500" />
+        <div v-else-if="hasError" class="text-center py-20 px-10">
+          <div class="bg-danger/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <XCircle class="w-10 h-10 text-danger" />
           </div>
-          <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Erro ao carregar dados</h3>
-          <p class="text-slate-500 dark:text-slate-400">Não foi possível carregar as informações do evento. Verifique sua conexão ou tente novamente mais tarde.</p>
-          <button @click="fetchData" class="mt-4 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
-            Tentar Novamente
-          </button>
+          <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">Erro de conexão</h3>
+          <p class="text-slate-500 dark:text-slate-400 font-medium mb-6">Não conseguimos sincronizar com o servidor.</p>
+          <button @click="fetchData" class="btn-primary">Tentar Denovo</button>
         </div>
 
-        <div v-else-if="guests.length === 0" class="text-center py-12">
-          <div class="bg-slate-50 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Users class="w-8 h-8 text-slate-400" />
+        <div v-else-if="guests.length === 0" class="text-center py-20">
+          <div class="bg-slate-100 dark:bg-white/5 w-20 h-20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
+            <Users class="w-10 h-10 text-slate-400" />
           </div>
-          <p class="text-slate-500 dark:text-slate-400 font-medium">Nenhum convidado encontrado.</p>
+          <p class="text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-xs">Vazio por enquanto</p>
         </div>
 
         <div v-else class="overflow-x-auto">
-          <table class="w-full text-left">
+          <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wider">
-                <th class="px-6 py-4 font-semibold">Convidado</th>
-                <th class="px-6 py-4 font-semibold text-center">Acompanhantes</th>
-                <th class="px-6 py-4 font-semibold">Status</th>
-                <th class="px-6 py-4 font-semibold text-center">Check-in</th>
-                <th class="px-6 py-4 font-semibold text-right">Ações</th>
+              <tr class="bg-slate-50/50 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.1em]">
+                <th class="px-8 py-5">Identificação</th>
+                <th class="px-8 py-5 text-center">Acompa.</th>
+                <th class="px-8 py-5">Status</th>
+                <th class="px-8 py-5 text-center">Presença</th>
+                <th class="px-8 py-5 text-right">Controles</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              <tr v-for="guest in guests" :key="guest.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                <td class="px-6 py-4">
-                  <div>
-                    <p class="font-bold text-slate-800 dark:text-white">{{ guest.name }}</p>
-                    <div class="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      <span v-if="guest.phone" class="flex items-center gap-1"><Phone class="w-3 h-3" /> 
-                        <a :href="`https://wa.me/55${guest.phone}`" target="_blank">{{ guest.phone }}</a>
-                      </span>
-                      <span v-if="guest.email" class="flex items-center gap-1"><Mail class="w-3 h-3" /> {{ guest.email }}</span>
+            <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+              <tr v-for="guest in guests" :key="guest.id" class="group hover:bg-slate-100/50 dark:hover:bg-white/5 transition-colors">
+                <td class="px-8 py-6">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-600/5 flex items-center justify-center text-primary-600 font-black">
+                       {{ guest.name.charAt(0) }}
+                    </div>
+                    <div>
+                      <p class="font-black text-slate-900 dark:text-white text-lg tracking-tight">{{ guest.name }}</p>
+                      <div class="flex items-center gap-4 mt-1">
+                        <a v-if="guest.phone" :href="`https://wa.me/55${guest.phone}`" target="_blank" class="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-emerald-500 transition-colors">
+                           <Phone class="w-3.5 h-3.5" /> {{ guest.phone }}
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 text-center">
-                  <span class="font-bold text-slate-700 dark:text-slate-300">{{ guest.companionCount }}</span>
+                <td class="px-8 py-6 text-center">
+                  <span class="inline-flex items-center justify-center min-w-[2rem] h-8 bg-slate-100 dark:bg-white/10 rounded-lg text-sm font-black text-slate-700 dark:text-slate-300">
+                    {{ guest.companionCount }}
+                  </span>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-8 py-6">
                   <button 
                     @click="toggleStatus(guest)"
                     :class="[
-                      'px-3 py-1 rounded-full text-xs font-bold leading-none transition-all hover:scale-105 active:scale-95',
-                      guest.status === GuestStatus.CONFIRMED ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                      guest.status === GuestStatus.NOT_CONFIRMED ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                      'px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 border',
+                      guest.status === GuestStatus.CONFIRMED ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
+                      guest.status === GuestStatus.NOT_CONFIRMED ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' :
+                      'bg-danger/10 text-danger border-danger/20'
                     ]"
                   >
-                    {{ guest.status === GuestStatus.CONFIRMED ? 'Confirmado' : guest.status === GuestStatus.NOT_CONFIRMED ? 'Pendente' : 'Não vai' }}
+                    {{ guest.status === GuestStatus.CONFIRMED ? 'Vem' : guest.status === GuestStatus.NOT_CONFIRMED ? 'Pendente' : 'Não vem' }}
                   </button>
                 </td>
-                <td class="px-6 py-4 text-center">
+                <td class="px-8 py-6 text-center">
                   <button 
                     @click="toggleCheckIn(guest)"
-                    class="group relative inline-flex items-center justify-center transition-all p-1"
+                    class="group relative inline-flex items-center justify-center p-2"
                   >
-                    <span :class="[
-                      'w-4 h-4 rounded-full border-2 transition-all',
+                    <div :class="[
+                      'w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center',
                       guest.attended 
-                        ? 'bg-green-500 border-green-500 shadow-sm shadow-green-500/50' 
-                        : 'bg-transparent border-slate-300 dark:border-slate-600 group-hover:border-primary-500'
-                    ]"></span>
+                        ? 'bg-primary-600 border-primary-600 shadow-lg shadow-primary-600/30 text-white' 
+                        : 'bg-transparent border-slate-300 dark:border-white/10 group-hover:border-primary-500'
+                    ]">
+                       <CheckCircle2 v-if="guest.attended" class="w-4 h-4" />
+                    </div>
                   </button>
                 </td>
-                <td class="px-6 py-4 text-right">
-                  <div class="flex justify-end gap-2">
+                <td class="px-8 py-6 text-right">
+                  <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       v-if="guest.status === GuestStatus.CONFIRMED"
                       @click="openQRCodeModal(guest)"
-                      class="p-2 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                      title="Ver QR Code"
+                      class="p-2.5 text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all"
+                      title="QR Code"
                     >
                       <QrCode class="w-4 h-4" />
                     </button>
                     <button 
                       v-if="guest.companionCount > 0"
                       @click="handleViewCompanions(guest)"
-                      class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                      title="Ver Acompanhantes"
+                      class="p-2.5 text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 rounded-xl transition-all"
+                      title="Companions"
                     >
                       <Users class="w-4 h-4" />
                     </button>
                     <button 
                       @click="handleEditGuest(guest)"
-                      class="p-2 text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                      class="p-2.5 text-slate-400 hover:text-primary-600 hover:bg-primary-600/10 rounded-xl transition-all"
                       title="Editar"
                     >
                       <Edit class="w-4 h-4" />
                     </button>
                     <button 
                       @click="handleDeleteGuest(guest)"
-                      class="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                      title="Excluir"
+                      class="p-2.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
+                      title="Apagar"
                     >
                       <Trash2 class="w-4 h-4" />
                     </button>
@@ -419,7 +405,7 @@ const onQrScan = (data: string) => {
     <button 
       v-if="isMobile && canPerformCheckIn"
       @click="showScanner = true"
-      class="fixed bottom-8 right-8 w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary-500/40 active:scale-95 transition-all z-40"
+      class="fixed bottom-10 right-10 w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary-600/40 active:scale-95 hover:scale-105 transition-all z-40 animate-bounce"
     >
       <Camera class="w-8 h-8" />
     </button>
@@ -432,3 +418,7 @@ const onQrScan = (data: string) => {
     />
   </div>
 </template>
+
+<style scoped>
+/* Transições de lista se desejar adicionar futuramente */
+</style>

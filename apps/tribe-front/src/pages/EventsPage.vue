@@ -82,119 +82,128 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Eventos</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1">Acompanhe e gerencie todos os eventos da sua tribo.</p>
+  <div class="space-y-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Gestão de Eventos</h2>
+        <p class="text-slate-500 dark:text-slate-400 font-medium">Acompanhe e maximize a experiência da sua tribo.</p>
       </div>
       <button
         @click="handleEdit(null as any)"
-        class="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary-500/20"
+        class="btn-primary flex items-center gap-2 group"
       >
-        <Plus class="w-5 h-5" />
-        <span>Novo Evento</span>
+        <Plus class="w-5 h-5 transition-transform group-hover:rotate-90" />
+        <span>Criar Novo Evento</span>
       </button>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600 dark:text-blue-400">
-            <LayoutGrid class="w-6 h-6" />
+      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 transition-transform group-hover:scale-110">
+            <LayoutGrid class="w-7 h-7" />
           </div>
           <div>
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total de Eventos</p>
-            <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ stats?.total || 0 }}</p>
+            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Total de Eventos</p>
+            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.total || 0 }}</p>
           </div>
         </div>
       </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-2xl text-green-600 dark:text-green-400">
-            <CalendarCheck class="w-6 h-6" />
+      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 transition-transform group-hover:scale-110">
+            <CalendarCheck class="w-7 h-7" />
           </div>
           <div>
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Concluídos</p>
-            <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ stats?.completed || 0 }}</p>
+            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Eventos Concluídos</p>
+            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.completed || 0 }}</p>
           </div>
         </div>
       </div>
-      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-2xl text-amber-600 dark:text-amber-400">
-            <CalendarClock class="w-6 h-6" />
+      <div class="glass-card p-8 group border border-white/10 dark:border-white/5">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 transition-transform group-hover:scale-110">
+            <CalendarClock class="w-7 h-7" />
           </div>
           <div>
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Agendados</p>
-            <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ stats?.future || 0 }}</p>
+            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Próximos Eventos</p>
+            <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats?.future || 0 }}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Events List -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
-      <div v-if="isLoading" class="flex justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+    <!-- Events Grid -->
+    <div v-if="isLoading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-primary-600 border-r-transparent"></div>
+    </div>
+    
+    <div v-else-if="events.length === 0" class="glass-card py-20 px-10 text-center space-y-6">
+      <div class="bg-primary-500/10 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto animate-float">
+        <Calendar class="w-12 h-12 text-primary-500" />
       </div>
-      <div v-else-if="events.length === 0" class="text-center py-20 px-6">
-        <div class="bg-slate-50 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Calendar class="w-10 h-10 text-slate-400" />
-        </div>
-        <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Nenhum evento ainda</h3>
-        <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto">Comece criando seu primeiro evento para gerenciar seus convidados.</p>
+      <div class="space-y-2">
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">Nenhum evento registrado</h3>
+        <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-medium">Sua jornada começa aqui. Crie seu primeiro evento VIP e gerencie tudo em um só lugar.</p>
       </div>
-      <div v-else class="divide-y divide-slate-100 dark:divide-slate-800">
-        <div
-          v-for="event in events"
-          :key="event.id"
-          class="flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
-        >
-          <div @click="goToDashboard(event.id)" class="flex-1 flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl">
+      <button @click="handleEdit(null as any)" class="btn-primary mt-4">Começar Agora</button>
+    </div>
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div
+        v-for="event in events"
+        :key="event.id"
+        @click="goToDashboard(event.id)"
+        class="glass-card p-8 group cursor-pointer border border-white/10 dark:border-white/5 flex flex-col justify-between"
+      >
+        <div class="space-y-6">
+          <div class="flex items-start justify-between">
+            <div class="w-16 h-16 rounded-[1.5rem] bg-primary-600/10 flex items-center justify-center text-primary-600 font-black text-2xl group-hover:scale-110 transition-transform duration-500">
               {{ event.name?.charAt(0).toUpperCase() || 'E' }}
             </div>
-            <div>
-              <h4 class="font-bold text-slate-800 dark:text-white group-hover:text-primary-600 transition-colors">{{ event.name }}</h4>
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-sm text-slate-500 dark:text-slate-400">
-                <span class="flex items-center gap-1">
-                  <Calendar class="w-4 h-4" />
-                  {{ new Date(event.date).toLocaleDateString() }}
-                </span>
-                <span class="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
-                <span v-if="event.address" class="flex items-center gap-1">
-                  <MapPin class="w-4 h-4" />
-                  {{ event.address.street }}, {{ event.address.number }} - {{ event.address.neighborhood }} ({{ event.address.city }})
-                </span>
-                <span v-else class="flex items-center gap-1">
-                  <MapPin class="w-4 h-4" />
-                  ID: {{ event.addressId }}
-                </span>
-              </div>
+            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 transition-transform duration-300">
+               <button 
+                  @click.stop="handleEdit(event)" 
+                  class="p-3 bg-white/50 dark:bg-white/5 hover:bg-primary-500 hover:text-white rounded-xl transition-all"
+                  title="Editar"
+               >
+                  <Pencil class="w-4 h-4" />
+               </button>
+               <button 
+                  @click.stop="handleDelete(event)" 
+                  class="p-3 bg-white/50 dark:bg-white/5 hover:bg-danger hover:text-white rounded-xl transition-all"
+                  title="Excluir"
+               >
+                  <Trash2 class="w-4 h-4" />
+               </button>
             </div>
           </div>
-          <div class="flex items-center gap-2 transition-opacity">
-            <button 
-              @click.stop="handleEdit(event)" 
-              class="p-2 text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
-              title="Editar Evento"
-            >
-              <Pencil class="w-5 h-5" />
-            </button>
-            <button 
-              @click.stop="handleDelete(event)" 
-              class="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
-              title="Excluir Evento"
-            >
-              <Trash2 class="w-5 h-5" />
-            </button>
-            <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-            <button @click="goToDashboard(event.id)" class="p-2 text-slate-400 hover:text-primary-600 transition-colors">
-              <ChevronRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+
+          <div class="space-y-2">
+            <h4 class="text-2xl font-black text-slate-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-1">{{ event.name }}</h4>
+            <p class="text-sm font-bold text-primary-600/80 dark:text-primary-400 flex items-center gap-2">
+               <Calendar class="w-4 h-4" />
+               {{ new Date(event.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) }}
+            </p>
           </div>
+
+          <p v-if="event.address" class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 font-medium leading-relaxed">
+            <MapPin class="w-4 h-4 inline-block -mt-1 mr-1" />
+            {{ event.address.street }}, {{ event.address.number }} - {{ event.address.neighborhood }}
+          </p>
+        </div>
+
+        <div class="mt-8 flex items-center justify-between">
+           <div class="flex -space-x-3">
+              <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
+                 VIP
+              </div>
+           </div>
+           <div class="flex items-center gap-2 text-slate-400 font-black text-sm group-hover:text-primary-600 transition-colors uppercase tracking-widest">
+              Gerenciar
+              <ChevronRight class="w-4 h-4 transition-transform group-hover:translate-x-1" />
+           </div>
         </div>
       </div>
     </div>

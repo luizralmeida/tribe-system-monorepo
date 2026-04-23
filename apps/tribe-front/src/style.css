@@ -15,7 +15,14 @@
   --color-primary-900: oklch(0.28 0.101 273.3);
   --color-primary-950: oklch(0.18 0.063 273.5);
 
-  --font-sans: "Inter", "Outfit", system-ui, sans-serif;
+  /* State Colors */
+  --color-success: oklch(0.63 0.15 160);
+  --color-warning: oklch(0.75 0.15 75);
+  --color-danger: oklch(0.55 0.18 25);
+  --color-info: oklch(0.60 0.15 250);
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
 }
 
 :root {
@@ -46,7 +53,10 @@ body {
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-50;
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight font-bold;
   }
 }
 
@@ -80,23 +90,31 @@ body {
   100% { background-position: 100% 50%; }
 }
 
-.animate-float {
+@utility animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-glow {
+@utility animate-glow {
   animation: glow 4s ease-in-out infinite;
 }
 
-.animate-bg-pan {
+@utility animate-bg-pan {
   animation: background-pan 10s linear infinite;
   background-size: 200% 200%;
 }
 
-.glass {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 dark:bg-slate-900/40 dark:border-slate-800/50;
+@utility glass {
+  @apply bg-white/50 backdrop-blur-xl border border-white/20 dark:bg-slate-900/40 dark:border-slate-800/50;
 }
 
-.glass-card {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 dark:bg-slate-900/40 dark:border-slate-800/50 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300;
+@utility glass-card {
+  @apply glass hover:bg-white/70 dark:hover:bg-slate-800/60 transition-all duration-300 shadow-sm hover:shadow-md rounded-[2.5rem];
+}
+
+@utility input-premium {
+  @apply w-full px-4 py-3 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all text-slate-800 dark:text-slate-100;
+}
+
+@utility btn-primary {
+  @apply px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-2xl shadow-lg shadow-primary-600/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none;
 }

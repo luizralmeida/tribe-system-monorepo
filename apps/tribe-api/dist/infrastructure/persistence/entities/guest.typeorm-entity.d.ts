@@ -7,7 +7,7 @@ export declare class GuestTypeOrmEntity {
     status: GuestStatus;
     attended: boolean;
     eventId: number;
-    email: string;
+    email: string | null;
     responsibleId: number | null;
     isChild: boolean;
     age?: number;

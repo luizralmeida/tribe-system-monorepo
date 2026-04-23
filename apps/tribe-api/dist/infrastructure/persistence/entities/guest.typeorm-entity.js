@@ -57,8 +57,8 @@ __decorate([
     __metadata("design:type", Number)
 ], GuestTypeOrmEntity.prototype, "eventId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", Object)
 ], GuestTypeOrmEntity.prototype, "email", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'fk_responsible', type: 'bigint', unsigned: true, nullable: true }),

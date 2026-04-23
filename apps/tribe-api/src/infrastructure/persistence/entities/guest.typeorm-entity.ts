@@ -32,8 +32,8 @@ export class GuestTypeOrmEntity {
   @Column({ name: 'fk_event', type: 'bigint', unsigned: true })
   eventId!: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  email!: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email!: string | null;
 
   @Column({ name: 'fk_responsible', type: 'bigint', unsigned: true, nullable: true })
   responsibleId!: number | null;

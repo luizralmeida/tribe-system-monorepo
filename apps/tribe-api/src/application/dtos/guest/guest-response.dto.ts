@@ -8,7 +8,7 @@ export class GuestResponseDto {
   readonly status: GuestStatus;
   readonly attended: boolean;
   readonly eventId: number;
-  readonly email: string;
+  readonly email: string | null;
   readonly responsibleId: number | null;
   readonly isChild: boolean;
   readonly companionCount: number;
@@ -25,7 +25,7 @@ export class GuestResponseDto {
     this.status = guest.status;
     this.attended = guest.attended;
     this.eventId = guest.eventId;
-    this.email = guest.email;
+    this.email = guest.email || null;
     this.responsibleId = guest.responsibleId || null;
     this.isChild = guest.isChild;
     this.companionCount = companions?.length || guest.companionCount || 0;

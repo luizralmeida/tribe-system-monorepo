@@ -23,7 +23,7 @@ export interface GuestDashboard {
 export interface CreateGuestData {
   name: string;
   phone: string;
-  email: string;
+  email?: string | null;
   status: GuestStatus;
   attended: boolean;
   eventId: number;

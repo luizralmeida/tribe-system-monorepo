@@ -27,7 +27,7 @@ export class CreateGuestUseCase
     const guest = await this.guestRepository.save({
       name: input.data.name,
       phone: input.data.phone,
-      email: input.data.email,
+      email: input.data.email || null,
       status: input.data.status ?? GuestStatus.NOT_CONFIRMED,
       attended: false,
       eventId: input.eventId,
@@ -40,7 +40,7 @@ export class CreateGuestUseCase
       const companionsData = input.data.companions.map((c) => ({
         name: c.name,
         phone: c.phone || input.data.phone,
-        email: c.email || input.data.email,
+        email: c.email || input.data.email || null,
         status: GuestStatus.NOT_CONFIRMED,
         attended: false,
         eventId: input.eventId,

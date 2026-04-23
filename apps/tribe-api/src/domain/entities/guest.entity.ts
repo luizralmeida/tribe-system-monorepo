@@ -8,7 +8,7 @@ export interface GuestProps {
   status: GuestStatus;
   attended: boolean;
   eventId: number;
-  email: string;
+  email?: string | null;
   responsibleId?: number | null;
   isChild: boolean;
   companionCount?: number;
@@ -25,7 +25,7 @@ export class Guest extends BaseEntity {
   readonly status: GuestStatus;
   readonly attended: boolean;
   readonly eventId: number;
-  readonly email: string;
+  readonly email?: string | null;
   readonly responsibleId?: number | null;
   readonly isChild: boolean;
   readonly age?: number;

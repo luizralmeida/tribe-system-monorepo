@@ -37,8 +37,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateGuestDto.prototype, "phone", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateGuestDto.prototype, "email", void 0);

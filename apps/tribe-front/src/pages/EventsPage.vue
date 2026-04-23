@@ -177,11 +177,6 @@ onMounted(async () => {
         </div>
 
         <div class="mt-8 flex items-center justify-between">
-           <div class="flex -space-x-3">
-              <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
-                 VIP
-              </div>
-           </div>
            <div class="flex items-center gap-2 text-slate-400 font-black text-sm group-hover:text-primary-600 transition-colors uppercase tracking-widest">
               Gerenciar
               <ChevronRight class="w-4 h-4 transition-transform group-hover:translate-x-1" />

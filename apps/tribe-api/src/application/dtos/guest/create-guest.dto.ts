@@ -23,10 +23,10 @@ export class CreateGuestDto {
   @MaxLength(20)
   phone!: string;
 
+  @IsOptional()
   @IsEmail()
-  @IsNotEmpty()
   @MaxLength(255)
-  email!: string;
+  email?: string;
 
   @IsOptional()
   @IsEnum(GuestStatus)

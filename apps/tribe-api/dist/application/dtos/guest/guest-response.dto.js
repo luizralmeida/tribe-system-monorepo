@@ -24,7 +24,7 @@ class GuestResponseDto {
         this.status = guest.status;
         this.attended = guest.attended;
         this.eventId = guest.eventId;
-        this.email = guest.email;
+        this.email = guest.email || null;
         this.responsibleId = guest.responsibleId || null;
         this.isChild = guest.isChild;
         this.companionCount = companions?.length || guest.companionCount || 0;

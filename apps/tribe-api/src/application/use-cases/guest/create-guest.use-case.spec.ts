@@ -61,4 +61,43 @@ describe('CreateGuestUseCase', () => {
       }),
     ]);
   });
+
+  it('should create guests without email and verify inheritance', async () => {
+    const input = {
+      eventId: 1,
+      data: {
+        name: 'Primary Guest',
+        phone: '123456789',
+        isChild: false,
+        companions: [
+          {
+            name: 'Companion 1',
+            isChild: true,
+          },
+        ],
+      } as any as CreateGuestDto,
+    };
+
+    repository.save.mockResolvedValue({
+      id: 1,
+      ...input.data,
+      eventId: 1,
+      responsibleId: 0,
+      email: null,
+    });
+
+    await useCase.execute(input);
+
+    expect(repository.save).toHaveBeenCalledWith(expect.objectContaining({
+      email: null
+    }));
+    expect(repository.saveBulk).toHaveBeenCalledWith([
+      expect.objectContaining({
+        name: 'Companion 1',
+        phone: '123456789',
+        email: null,
+        isChild: true,
+      }),
+    ]);
+  });
 });

@@ -7,7 +7,7 @@ export declare class GuestResponseDto {
     readonly status: GuestStatus;
     readonly attended: boolean;
     readonly eventId: number;
-    readonly email: string;
+    readonly email: string | null;
     readonly responsibleId: number | null;
     readonly isChild: boolean;
     readonly companionCount: number;

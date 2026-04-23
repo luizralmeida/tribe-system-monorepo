@@ -21,6 +21,10 @@ const navigateToRestrictedArea = () => {
   router.push({ name: 'restrictedArea' });
 };
 
+const goToWhatsapp = () => {
+  window.open('https://wa.me/5531991967276', '_blank');
+};
+
 const features = [
   { 
     title: 'RSVP Inteligente', 
@@ -98,7 +102,7 @@ const audiences = [
 
         <h1 class="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-500">
           Controle Total <br/>
-          Experiência <span class="text-primary-500">Elite</span>.
+          Experiência <span class="text-primary-500">VIP</span>.
         </h1>
 
         <p class="text-lg md:text-xl text-slate-400 max-w-2xl leading-relaxed mb-12">
@@ -106,8 +110,8 @@ const audiences = [
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4">
-          <button class="px-10 py-5 bg-white text-slate-950 font-black rounded-full flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-white/10 group">
-            Começar Grátis
+          <button @click="goToWhatsapp" class="px-10 py-5 bg-white text-slate-950 font-black rounded-full flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-white/10 group">
+            Falar com Consultor
             <ArrowRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
           <button @click="navigateToRestrictedArea" class="px-10 py-5 glass hover:bg-white/10 text-white font-bold rounded-full transition-all">
@@ -179,9 +183,6 @@ const audiences = [
             <h2 class="text-4xl md:text-5xl font-black mb-6">Recursos Premium</h2>
             <p class="text-slate-400 text-lg">Criado por especialistas em eventos para quem exige controle total e segurança absoluta.</p>
           </div>
-          <button class="px-8 py-4 glass hover:bg-white/5 rounded-2xl text-sm font-bold transition-all border-white/10 shrink-0">
-            Ver todas as funções
-          </button>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
@@ -238,10 +239,7 @@ const audiences = [
           <h2 class="text-4xl md:text-6xl font-black mb-8 text-white">Pronto para elevar o <br/> nível do seu evento?</h2>
           <p class="text-primary-100 text-lg mb-12 max-w-xl mx-auto opacity-90">Junte-se aos melhores organizadores e garanta uma experiência única para seus convidados.</p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <button class="px-10 py-5 bg-white text-primary-600 font-black rounded-full hover:scale-105 transition-all shadow-2xl shadow-black/20">
-              Começar Agora
-            </button>
-            <button class="px-10 py-5 bg-primary-700/50 backdrop-blur-sm border border-white/20 text-white font-bold rounded-full hover:bg-primary-700/70 transition-all">
+            <button @click="goToWhatsapp" class="px-10 py-5 bg-primary-700/50 backdrop-blur-sm border border-white/20 text-white font-bold rounded-full hover:bg-primary-700/70 transition-all">
               Falar com Consultor
             </button>
           </div>

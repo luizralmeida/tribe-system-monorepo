@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { 
   X, 
   User, 
@@ -8,8 +8,7 @@ import {
   CheckCircle2,
   UserPlus,
   Phone,
-  Calendar,
-  Search
+  Calendar
 } from 'lucide-vue-next';
 import { userService } from '../services/user.service';
 import { eventService } from '../services/event.service';
@@ -33,15 +32,6 @@ const form = ref({
 });
 
 const allEvents = ref<Event[]>([]);
-const eventSearch = ref('');
-
-const filteredEvents = computed(() => {
-  if (!eventSearch.value) return allEvents.value;
-  const search = eventSearch.value.toLowerCase();
-  return allEvents.value.filter(event => 
-    event.name?.toLowerCase().includes(search)
-  );
-});
 
 const isLoading = ref(false);
 const error = ref('');
@@ -181,7 +171,7 @@ const handleSubmit = async () => {
               <!-- Role Selector -->
               <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">Nível de Permissão</label>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                    <button 
                     type="button"
                     v-for="role in Object.values(UserRole)"
@@ -203,21 +193,9 @@ const handleSubmit = async () => {
                   <Calendar class="w-3 h-3" />
                   Vincular a Eventos
                 </label>
-                
-                <!-- Event Search -->
-                <div class="relative group mb-4">
-                  <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-600 transition-colors" />
-                  <input 
-                    v-model="eventSearch" 
-                    type="text" 
-                    placeholder="Pesquisar evento..." 
-                    class="input-premium pl-11 py-3 text-sm"
-                  />
-                </div>
-
                 <div class="max-h-40 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                    <div 
-                    v-for="event in filteredEvents" 
+                    v-for="event in allEvents" 
                     :key="event.id"
                     @click="toggleEvent(event.id)"
                     :class="[

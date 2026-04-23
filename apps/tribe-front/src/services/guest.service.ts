@@ -14,6 +14,8 @@ export interface GuestEvent extends Guest {
       state: string;
     };
   };
+  qrCode?: string;
+  companions?: Guest[];
 }
 
 export const guestService = {

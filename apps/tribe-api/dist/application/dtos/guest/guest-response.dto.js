@@ -32,7 +32,7 @@ class GuestResponseDto {
         this.qrCode = qrCode;
         this.createdAt = guest.createdAt;
         this.updatedAt = guest.updatedAt;
-        this.companions = companions?.map((c) => new GuestResponseDto(c, [])) || [];
+        this.companions = companions?.map((c) => new GuestResponseDto(c, [], c.qrCode)) || [];
     }
     static fromDomain(guest) {
         return new GuestResponseDto(guest, []);

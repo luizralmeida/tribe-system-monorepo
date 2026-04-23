@@ -31,13 +31,23 @@ export class GetGuestByIdUseCase
     const { guest, event } = await this.validateAndReturnEntities(input.id);
     const companions = await this.guestRepository.findByCompanionId(guest.id);
 
+    // Generate QR codes for companions if they are confirmed
+    const companionsWithQr = await Promise.all(
+      companions.map(async (c) => {
+        if (c.status === GuestStatus.CONFIRMED) {
+          (c as any).qrCode = await this.generateQrCode(c.id);
+        }
+        return c;
+      }),
+    );
+
     let qrCode: string | undefined;
     if (guest.status === GuestStatus.CONFIRMED) {
       qrCode = await this.generateQrCode(guest.id);
     }
 
     this.logger.log("[execute] Guest found", guest);
-    return GuestEventResponseDto.fromDomainWithEvent(guest, event, companions, qrCode);
+    return GuestEventResponseDto.fromDomainWithEvent(guest, event, companionsWithQr, qrCode);
   }
 
   private async generateQrCode(guestId: number): Promise<string> {

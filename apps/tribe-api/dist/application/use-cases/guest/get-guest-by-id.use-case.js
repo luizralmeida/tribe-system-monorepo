@@ -69,12 +69,18 @@ let GetGuestByIdUseCase = GetGuestByIdUseCase_1 = class GetGuestByIdUseCase {
         this.logger.debug("[execute] Getting Guest by Id");
         const { guest, event } = await this.validateAndReturnEntities(input.id);
         const companions = await this.guestRepository.findByCompanionId(guest.id);
+        const companionsWithQr = await Promise.all(companions.map(async (c) => {
+            if (c.status === guest_status_enum_js_1.GuestStatus.CONFIRMED) {
+                c.qrCode = await this.generateQrCode(c.id);
+            }
+            return c;
+        }));
         let qrCode;
         if (guest.status === guest_status_enum_js_1.GuestStatus.CONFIRMED) {
             qrCode = await this.generateQrCode(guest.id);
         }
         this.logger.log("[execute] Guest found", guest);
-        return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event, companions, qrCode);
+        return guest_event_response_dto_js_1.GuestEventResponseDto.fromDomainWithEvent(guest, event, companionsWithQr, qrCode);
     }
     async generateQrCode(guestId) {
         const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:5173';

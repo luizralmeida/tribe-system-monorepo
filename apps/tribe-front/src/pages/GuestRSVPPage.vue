@@ -22,9 +22,9 @@ const router = useRouter();
 const guestId = parseInt(route.params.id as string);
 
 const guest = ref<GuestEvent | null>(null);
-const qrCode = ref<string | null>(null);
+const qrCodes = ref<Record<number, string>>({});
 const isLoading = ref(true);
-const isUpdating = ref(false);
+const updatingId = ref<number | null>(null);
 const error = ref('');
 const showCopied = ref(false);
 const collapsedStates = ref<Record<number, boolean>>({});
@@ -38,7 +38,13 @@ onMounted(async () => {
       // Companions start collapsed
       guest.value.companions?.forEach(c => {
         collapsedStates.value[c.id] = true;
+        if (c.status === 'CONFIRMED' && c.qrCode) {
+          qrCodes.value[c.id] = c.qrCode;
+        }
       });
+      if (guest.value.status === 'CONFIRMED' && guest.value.qrCode) {
+        qrCodes.value[guest.value.id] = guest.value.qrCode;
+      }
     }
   } catch (err: any) {
     error.value = 'Houve um problema ao carregar as informações do seu convite.';
@@ -51,21 +57,33 @@ const toggleCollapse = (id: number) => {
   collapsedStates.value[id] = !collapsedStates.value[id];
 };
 
-const handleRSVP = async (status: 'CONFIRMED' | 'NOT_COMING') => {
-  isUpdating.value = true;
+const handleRSVP = async (id: number, status: 'CONFIRMED' | 'NOT_COMING') => {
+  updatingId.value = id;
   error.value = '';
   try {
-    const response = await guestService.updateStatus(guestId, status);
+    const response = await guestService.updateStatus(id, status);
+    
+    // Update local state for the correct guest
     if (guest.value) {
-      guest.value.status = response.guest.status;
-    }
-    if (response.qrCode) {
-      qrCode.value = response.qrCode;
+      if (guest.value.id === id) {
+        guest.value.status = response.guest.status;
+        if (response.qrCode) {
+          qrCodes.value[id] = response.qrCode;
+        }
+      } else if (guest.value.companions) {
+        const companion = guest.value.companions.find(c => c.id === id);
+        if (companion) {
+          companion.status = response.guest.status;
+          if (response.qrCode) {
+            qrCodes.value[id] = response.qrCode;
+          }
+        }
+      }
     }
   } catch (err: any) {
     error.value = 'Não foi possível atualizar sua resposta. Tente novamente.';
   } finally {
-    isUpdating.value = false;
+    updatingId.value = null;
   }
 };
 
@@ -195,18 +213,18 @@ const copyLink = () => {
               </div>
 
               <!-- RSVP Actions -->
-              <div v-if="currentGuest.status === 'NOT_CONFIRMED' && !isUpdating" class="space-y-4 pt-4">
+              <div v-if="currentGuest.status === 'NOT_CONFIRMED' && updatingId !== currentGuest.id" class="space-y-4 pt-4">
                 <p class="text-base font-bold text-slate-800 dark:text-white">Confirma presença para {{ currentGuest.name }}?</p>
                 <div class="grid grid-cols-2 gap-4">
                   <button 
-                    @click="handleRSVP('CONFIRMED')"
+                    @click="handleRSVP(currentGuest.id, 'CONFIRMED')"
                     class="btn-primary flex flex-col items-center gap-2 p-5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black rounded-3xl border-2 border-transparent hover:border-emerald-500 transition-all text-sm"
                   >
                     <CheckCircle2 class="w-6 h-6" />
                     Confirmar
                   </button>
                   <button 
-                    @click="handleRSVP('NOT_COMING')"
+                    @click="handleRSVP(currentGuest.id, 'NOT_COMING')"
                     class="flex flex-col items-center gap-2 p-5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-black rounded-3xl border-2 border-transparent hover:border-red-500 transition-all text-sm"
                   >
                     <XCircle class="w-6 h-6" />
@@ -215,7 +233,7 @@ const copyLink = () => {
                 </div>
               </div>
 
-              <div v-else-if="currentGuest.id === guestId && isUpdating" class="py-6 flex flex-col items-center gap-4">
+              <div v-else-if="updatingId === currentGuest.id" class="py-6 flex flex-col items-center gap-4">
                 <Loader2 class="w-10 h-10 text-primary-600 animate-spin" />
                 <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Atualizando...</p>
               </div>
@@ -230,25 +248,24 @@ const copyLink = () => {
                   <p class="text-slate-500 dark:text-slate-400 text-[11px]">Apresente o QR Code na entrada.</p>
                 </div>
 
-                <!-- QR Code (Currently only for parent as service returns one QR code, but in future could be per guest) -->
-                <div v-if="currentGuest.id === guestId && qrCode" class="space-y-4">
+                <!-- QR Code -->
+                <div v-if="qrCodes[currentGuest.id]" class="space-y-4">
                   <div class="bg-white p-4 rounded-3xl inline-block shadow-lg border border-slate-100">
-                    <img :src="qrCode" alt="Ticket QR Code" class="w-40 h-40" />
+                    <img :src="qrCodes[currentGuest.id]" alt="Ticket QR Code" class="w-40 h-40" />
                   </div>
                   <div class="flex items-center justify-center gap-4">
-                    <button @click="copyLink" class="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all">
+                    <button v-if="currentGuest.id === guestId" @click="copyLink" class="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all">
                       <component :is="showCopied ? Check : Copy" class="w-5 h-5" />
                     </button>
                   </div>
                 </div>
 
-                <button v-if="currentGuest.id === guestId" @click="handleRSVP('NOT_COMING')" class="text-[10px] font-black text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest mt-4">
+                <button @click="handleRSVP(currentGuest.id, 'NOT_COMING')" class="text-[10px] font-black text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest mt-4">
                   Alterar resposta para "Não irei"
                 </button>
               </div>
 
-              <!-- Not Coming State -->
-              <div v-else-if="currentGuest.status === 'NOT_COMING'" class="space-y-4 py-4">
+              <div v-else-if="currentGuest.status === 'NOT_COMING' && updatingId !== currentGuest.id" class="space-y-4 py-4">
                 <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
                   <Heart class="w-8 h-8 text-slate-300" />
                 </div>
@@ -257,7 +274,7 @@ const copyLink = () => {
                   <p class="text-xs text-slate-500 dark:text-slate-400">Mude de ideia a qualquer momento abaixo.</p>
                 </div>
                 <button 
-                  @click="handleRSVP('CONFIRMED')"
+                  @click="handleRSVP(currentGuest.id, 'CONFIRMED')"
                   class="px-6 py-3 bg-primary-600 text-white font-black rounded-2xl shadow-lg shadow-primary-500/20 hover:bg-primary-700 transition-all w-full text-sm"
                 >
                   Eu vou!

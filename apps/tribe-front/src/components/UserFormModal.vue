@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { 
   X, 
   User, 
@@ -7,11 +7,14 @@ import {
   Lock, 
   CheckCircle2,
   UserPlus,
-  Phone
+  Phone,
+  Calendar,
+  Search
 } from 'lucide-vue-next';
 import { userService } from '../services/user.service';
+import { eventService } from '../services/event.service';
 import { UserRole, UserRoleLabels } from '../types/enums';
-import type { User as UserType } from '../types';
+import type { User as UserType, Event } from '../types';
 
 interface Props {
   user?: UserType | null;
@@ -25,23 +28,52 @@ const form = ref({
   email: '',
   phone: '',
   password: '',
-  role: UserRole.VIEW as UserRole
+  role: UserRole.VIEW as UserRole,
+  eventIds: [] as number[]
+});
+
+const allEvents = ref<Event[]>([]);
+const eventSearch = ref('');
+
+const filteredEvents = computed(() => {
+  if (!eventSearch.value) return allEvents.value;
+  const search = eventSearch.value.toLowerCase();
+  return allEvents.value.filter(event => 
+    event.name?.toLowerCase().includes(search)
+  );
 });
 
 const isLoading = ref(false);
 const error = ref('');
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const response = await eventService.findAll({ limit: 100 });
+    allEvents.value = response.data;
+  } catch (err) {
+    console.error('Failed to fetch events', err);
+  }
+
   if (props.user) {
     form.value = {
       name: props.user.name,
       email: props.user.email,
       phone: props.user.phone || '',
       password: '',
-      role: props.user.role as UserRole
+      role: props.user.role as UserRole,
+      eventIds: props.user.eventIds || []
     };
   }
 });
+
+const toggleEvent = (eventId: number) => {
+  const index = form.value.eventIds.indexOf(eventId);
+  if (index === -1) {
+    form.value.eventIds.push(eventId);
+  } else {
+    form.value.eventIds.splice(index, 1);
+  }
+};
 
 const handleSubmit = async () => {
   if (!form.value.name || !form.value.email || (!props.user && !form.value.password)) {
@@ -58,6 +90,7 @@ const handleSubmit = async () => {
       email: form.value.email,
       phone: form.value.phone,
       role: form.value.role,
+      eventIds: form.value.eventIds
     };
     
     if (form.value.password) {
@@ -93,7 +126,7 @@ const handleSubmit = async () => {
                 <UserPlus class="w-6 h-6" />
              </div>
              <div>
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ user ? 'Editar Staff' : 'Novo Staff' }}</h3>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ user ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
                 <p class="text-xs font-black uppercase tracking-widest text-slate-400 mt-1">Controle de Acesso</p>
              </div>
           </div>
@@ -148,7 +181,7 @@ const handleSubmit = async () => {
               <!-- Role Selector -->
               <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">Nível de Permissão</label>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                    <button 
                     type="button"
                     v-for="role in Object.values(UserRole)"
@@ -161,6 +194,50 @@ const handleSubmit = async () => {
                    >
                      {{ UserRoleLabels[role] }}
                    </button>
+                </div>
+              </div>
+
+              <!-- Events Selector -->
+              <div v-if="allEvents.length > 0">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 ml-1 flex items-center gap-2">
+                  <Calendar class="w-3 h-3" />
+                  Vincular a Eventos
+                </label>
+                
+                <!-- Event Search -->
+                <div class="relative group mb-4">
+                  <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-600 transition-colors" />
+                  <input 
+                    v-model="eventSearch" 
+                    type="text" 
+                    placeholder="Pesquisar evento..." 
+                    class="input-premium pl-11 py-3 text-sm"
+                  />
+                </div>
+
+                <div class="max-h-40 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+                   <div 
+                    v-for="event in filteredEvents" 
+                    :key="event.id"
+                    @click="toggleEvent(event.id)"
+                    :class="[
+                      'p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group',
+                      form.eventIds.includes(event.id) ? 'bg-primary-500/5 border-primary-500/20' : 'bg-slate-50 dark:bg-white/5 border-transparent hover:border-slate-200 dark:hover:border-white/10'
+                    ]"
+                   >
+                     <div class="flex items-center gap-3">
+                        <div :class="[
+                          'w-5 h-5 rounded-lg border flex items-center justify-center transition-all',
+                          form.eventIds.includes(event.id) ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white dark:bg-white/10 border-slate-200 dark:border-white/10'
+                        ]">
+                          <CheckCircle2 v-if="form.eventIds.includes(event.id)" class="w-3 h-3" />
+                        </div>
+                        <span :class="[
+                          'text-xs font-bold transition-colors',
+                          form.eventIds.includes(event.id) ? 'text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400'
+                        ]">{{ event.name }}</span>
+                     </div>
+                   </div>
                 </div>
               </div>
             </div>

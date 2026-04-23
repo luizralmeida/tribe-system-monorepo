@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateEventDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const create_address_dto_js_1 = require("../address/create-address.dto.js");
 class CreateEventDto {
     name;
     addressId;
+    address;
     date;
 }
 exports.CreateEventDto = CreateEventDto;
@@ -25,10 +27,17 @@ __decorate([
     __metadata("design:type", String)
 ], CreateEventDto.prototype, "name", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateEventDto.prototype, "addressId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => create_address_dto_js_1.CreateAddressDto),
+    __metadata("design:type", create_address_dto_js_1.CreateAddressDto)
+], CreateEventDto.prototype, "address", void 0);
 __decorate([
     (0, class_validator_1.IsDateString)(),
     (0, class_validator_1.IsNotEmpty)(),

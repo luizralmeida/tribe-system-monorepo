@@ -25,13 +25,28 @@ let CreateEventUseCase = class CreateEventUseCase {
         this.addressRepository = addressRepository;
     }
     async execute(input) {
-        const address = await this.addressRepository.findById(input.addressId);
-        if (!address) {
-            throw new common_1.NotFoundException(`Address with id ${input.addressId} not found`);
+        let addressId = input.addressId;
+        if (input.address) {
+            const newAddress = await this.addressRepository.save({
+                ...input.address,
+                name: input.address.name ?? null,
+                complement: input.address.complement ?? '',
+                country: input.address.country ?? 'Brasil',
+            });
+            addressId = newAddress.id;
+        }
+        else if (addressId) {
+            const address = await this.addressRepository.findById(addressId);
+            if (!address) {
+                throw new common_1.NotFoundException(`Address with id ${addressId} not found`);
+            }
+        }
+        else {
+            throw new common_1.BadRequestException('Either address or addressId must be provided');
         }
         const event = await this.eventRepository.save({
             name: input.name ?? null,
-            addressId: input.addressId,
+            addressId: addressId,
             date: new Date(input.date),
         });
         return event_response_dto_js_1.EventResponseDto.fromDomain(event);

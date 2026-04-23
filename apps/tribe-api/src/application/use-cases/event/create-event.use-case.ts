@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type { IUseCase } from '../../../domain/services/use-case.interface.js';
 import type { IEventRepository } from '../../../domain/repositories/event.repository.interface.js';
 import { EVENT_REPOSITORY } from '../../../domain/repositories/event.repository.interface.js';
@@ -17,14 +22,28 @@ export class CreateEventUseCase
   ) {}
 
   async execute(input: CreateEventDto): Promise<EventResponseDto> {
-    const address = await this.addressRepository.findById(input.addressId);
-    if (!address) {
-      throw new NotFoundException(`Address with id ${input.addressId} not found`);
+    let addressId = input.addressId;
+
+    if (input.address) {
+      const newAddress = await this.addressRepository.save({
+        ...input.address,
+        name: input.address.name ?? null,
+        complement: input.address.complement ?? '',
+        country: input.address.country ?? 'Brasil',
+      });
+      addressId = newAddress.id;
+    } else if (addressId) {
+      const address = await this.addressRepository.findById(addressId);
+      if (!address) {
+        throw new NotFoundException(`Address with id ${addressId} not found`);
+      }
+    } else {
+      throw new BadRequestException('Either address or addressId must be provided');
     }
 
     const event = await this.eventRepository.save({
       name: input.name ?? null,
-      addressId: input.addressId,
+      addressId: addressId!,
       date: new Date(input.date),
     });
 

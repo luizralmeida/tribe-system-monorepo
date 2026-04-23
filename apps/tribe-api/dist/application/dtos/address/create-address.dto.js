@@ -48,6 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAddressDto.prototype, "number", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
@@ -63,8 +64,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAddressDto.prototype, "state", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateAddressDto.prototype, "country", void 0);

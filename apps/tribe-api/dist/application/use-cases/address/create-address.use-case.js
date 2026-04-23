@@ -27,10 +27,10 @@ let CreateAddressUseCase = class CreateAddressUseCase {
             street: input.street,
             neighborhood: input.neighborhood,
             number: input.number,
-            complement: input.complement,
+            complement: input.complement ?? '',
             city: input.city,
             state: input.state,
-            country: input.country,
+            country: input.country ?? 'Brasil',
         });
         return address_response_dto_js_1.AddressResponseDto.fromDomain(address);
     }

@@ -22,9 +22,10 @@ export class CreateAddressDto {
   @MaxLength(10)
   number!: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(255)
-  complement!: string;
+  complement?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -34,8 +35,8 @@ export class CreateAddressDto {
   @IsEnum(BrazilianState)
   state!: BrazilianState;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(255)
-  country!: string;
+  country?: string;
 }

@@ -4,8 +4,8 @@ export declare class CreateAddressDto {
     street: string;
     neighborhood: string;
     number: string;
-    complement: string;
+    complement?: string;
     city: string;
     state: BrazilianState;
-    country: string;
+    country?: string;
 }

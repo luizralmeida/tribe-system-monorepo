@@ -2,7 +2,6 @@
 import { useRouter } from 'vue-router';
 import { Ticket, LogIn, ArrowLeft } from 'lucide-vue-next';
 import horizontalFullLogo from '@/assets/horizontal-full-logo.svg';
-import iconLogo from '@/assets/icon-logo.svg';
 
 const router = useRouter();
 

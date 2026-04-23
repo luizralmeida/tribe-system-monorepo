@@ -10,7 +10,8 @@ import {
   QrCode,
   Smartphone,
   LayoutDashboard,
-  CheckCircle2
+  CheckCircle2,
+  Ticket
 } from 'lucide-vue-next';
 import fullLogo from '@/assets/full-logo.svg';
 
@@ -120,13 +121,17 @@ const audiences = [
           <div class="relative glass rounded-[2.5rem] overflow-hidden">
              <div class="p-8 md:p-12 bg-gradient-to-br from-slate-900/50 to-transparent">
                 <div class="grid md:grid-cols-3 gap-6">
-                   <div v-for="i in 3" :key="i" class="h-48 glass rounded-3xl p-6 flex flex-col justify-between border-white/5">
-                      <div class="w-12 h-12 rounded-2xl bg-primary-500/20 flex items-center justify-center">
-                         <component :is="[Users, Zap, LayoutDashboard][i-1]" class="w-6 h-6 text-primary-400" />
+                   <div v-for="(card, i) in [
+                     { icon: Users, label: 'Gerencie seus convidados', desc: 'Controle total sobre sua lista VIP.', color: 'text-primary-400' },
+                     { icon: Ticket, label: 'Gere seus convites', desc: 'Emissão instantânea de QR Codes.', color: 'text-emerald-400' },
+                     { icon: Zap, label: 'Automatize seu processo', desc: 'RSVP e check-in sem atritos.', color: 'text-blue-400' }
+                   ]" :key="i" class="h-48 glass rounded-3xl p-6 flex flex-col justify-between border-white/5 hover:border-white/10 transition-colors">
+                      <div class="w-12 h-12 rounded-2xl bg-primary-500/10 flex items-center justify-center">
+                         <component :is="card.icon" class="w-6 h-6" :class="card.color" />
                       </div>
-                      <div class="space-y-3">
-                         <div class="h-3 w-2/3 bg-white/10 rounded-full"></div>
-                         <div class="h-2 w-1/2 bg-white/5 rounded-full"></div>
+                      <div class="space-y-1">
+                         <div class="text-xl font-black text-white leading-tight">{{ card.label }}</div>
+                         <div class="text-xs text-slate-500 font-medium">{{ card.desc }}</div>
                       </div>
                    </div>
                 </div>

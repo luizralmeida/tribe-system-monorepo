@@ -15,6 +15,7 @@ import { CreateGuestDto } from '../../application/dtos/guest/create-guest.dto.js
 import { UpdateGuestDto } from '../../application/dtos/guest/update-guest.dto.js';
 import { UpdateGuestRSVPDto } from '../../application/dtos/guest/update-guest-rsvp.dto.js';
 import { GuestFilterDto } from '../../application/dtos/guest/guest-filter.dto.js';
+import { CheckInGuestDto } from '../../application/dtos/guest/check-in-guest.dto.js';
 interface MulterFile {
     buffer: Buffer;
     originalname: string;
@@ -45,7 +46,7 @@ export declare class GuestController {
     confirm(token: string): Promise<import("../../application/use-cases/guest/confirm-guest.use-case.js").ConfirmGuestOutput>;
     findByPhone(phone: string): Promise<import("../../application/dtos/guest/guest-event-response.dto.js").GuestEventResponseDto[]>;
     updateStatus(id: number, dto: UpdateGuestRSVPDto): Promise<import("../../application/use-cases/guest/update-guest-rsvp.use-case.js").UpdateGuestRSVPOutput>;
-    checkIn(id: number): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>;
+    checkIn(id: number, dto: CheckInGuestDto): Promise<import("../../application/dtos/guest/guest-response.dto.js").GuestResponseDto>;
     getById(id: number): Promise<import("../../application/dtos/guest/guest-event-response.dto.js").GuestEventResponseDto>;
 }
 export {};

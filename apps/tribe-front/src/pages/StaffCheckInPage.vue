@@ -23,9 +23,24 @@ const isCheckingIn = ref(false);
 const error = ref('');
 const success = ref(false);
 
+const selectedIds = ref<number[]>([]);
+
 onMounted(async () => {
   try {
     guest.value = await guestService.getGuestById(guestId);
+    if (guest.value) {
+      // Default selection: only those not yet attended
+      if (!guest.value.attended) {
+        selectedIds.value.push(guest.value.id);
+      }
+      
+      const companions = guest.value.companions || [];
+      companions.forEach(c => {
+        if (!c.attended) {
+          selectedIds.value.push(c.id);
+        }
+      });
+    }
   } catch (err: any) {
     error.value = 'Houve um problema ao carregar as informações do convidado.';
   } finally {
@@ -33,14 +48,39 @@ onMounted(async () => {
   }
 });
 
+const toggleSelection = (id: number) => {
+  const index = selectedIds.value.indexOf(id);
+  if (index === -1) {
+    selectedIds.value.push(id);
+  } else {
+    selectedIds.value.splice(index, 1);
+  }
+};
+
 const handleCheckIn = async () => {
+  if (selectedIds.value.length === 0) {
+    error.value = 'Selecione pelo menos uma pessoa para realizar o check-in.';
+    return;
+  }
+
   isCheckingIn.value = true;
   error.value = '';
   try {
-    await guestService.checkIn(guestId);
+    const companionIds = selectedIds.value.filter(id => id !== guestId);
+    await guestService.checkIn(guestId, companionIds);
+    
     success.value = true;
     if (guest.value) {
-      guest.value.attended = true;
+      if (selectedIds.value.includes(guest.value.id)) {
+        guest.value.attended = true;
+      }
+      
+      const companions = guest.value.companions || [];
+      companions.forEach(c => {
+        if (selectedIds.value.includes(c.id)) {
+          c.attended = true;
+        }
+      });
     }
   } catch (err: any) {
     error.value = 'Não foi possível realizar o check-in. Tente novamente.';
@@ -84,7 +124,7 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
         <p class="text-slate-500 font-medium">Validando informações...</p>
       </div>
 
-      <div v-else-if="error || !guest" class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 text-center space-y-4">
+      <div v-else-if="error && !guest" class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 text-center space-y-4">
         <div class="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto">
           <AlertTriangle class="w-10 h-10 text-red-500" />
         </div>
@@ -94,7 +134,7 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
         </button>
       </div>
 
-      <div v-else class="space-y-6">
+      <div v-else-if="guest" class="space-y-6">
         <!-- Success State -->
         <div v-if="success" class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-2xl border border-emerald-100 dark:border-emerald-900/30 text-center space-y-6">
           <div class="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto">
@@ -102,7 +142,9 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
           </div>
           <div class="space-y-2">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Entrada Confirmada!</h2>
-            <p class="text-slate-500 dark:text-slate-400">O check-in de <strong>{{ guest.name }}</strong> foi realizado com sucesso.</p>
+            <p class="text-slate-500 dark:text-slate-400">
+              Check-in de <strong>{{ selectedIds.length }}</strong> {{ selectedIds.length === 1 ? 'pessoa' : 'pessoas' }} realizado com sucesso.
+            </p>
           </div>
           <button 
             @click="router.push({ name: 'eventDashboard', params: { id: guest.event.id } })" 
@@ -114,21 +156,6 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
 
         <div v-else class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden">
           <div class="p-8 space-y-8">
-            <!-- Guest Header -->
-            <div class="flex items-center gap-6">
-              <div class="w-20 h-20 bg-primary-50 dark:bg-primary-900/20 rounded-[1.5rem] flex items-center justify-center shrink-0">
-                <User class="w-10 h-10 text-primary-600" />
-              </div>
-              <div>
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ guest.name }}</h3>
-                <p class="text-slate-500 font-medium">{{ guest.phone }}</p>
-                <div class="mt-2 flex gap-2">
-                  <span v-if="guest.isChild" class="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider rounded-lg">Criança</span>
-                  <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded-lg">ID: {{ guest.id }}</span>
-                </div>
-              </div>
-            </div>
-
             <!-- Event Context -->
             <div class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl space-y-4">
               <div class="flex items-center gap-3 text-slate-600 dark:text-slate-300">
@@ -144,12 +171,95 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
               </div>
             </div>
 
-            <!-- Attendance Warning -->
-            <div v-if="guest.attended" class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-3xl border border-amber-100 dark:border-amber-900/30 flex items-start gap-4">
-              <AlertTriangle class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
-              <div>
-                <p class="text-amber-800 dark:text-amber-400 font-bold">Já realizou check-in!</p>
-                <p class="text-amber-700/70 dark:text-amber-400/70 text-sm">Este convidado já teve sua entrada confirmada anteriormente.</p>
+            <!-- Seleção de Integrantes -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between px-2">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white">Integrantes do Grupo</h3>
+                <span class="text-xs font-bold uppercase tracking-wider text-primary-600 bg-primary-50 dark:bg-primary-900/20 px-3 py-1 rounded-full">
+                  {{ selectedIds.length }} selecionados
+                </span>
+              </div>
+
+              <div class="space-y-3">
+                <!-- Convidado Principal -->
+                <div 
+                  @click="!guest.attended && toggleSelection(guest.id)"
+                  :class="[
+                    'p-5 rounded-3xl border transition-all cursor-pointer flex items-center justify-between group',
+                    guest.attended ? 'bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 opacity-60' : 
+                    selectedIds.includes(guest.id) ? 'bg-primary-50 dark:bg-primary-900/10 border-primary-200 dark:border-primary-800 shadow-lg shadow-primary-500/5' : 
+                    'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-primary-800'
+                  ]"
+                >
+                  <div class="flex items-center gap-4">
+                    <div :class="[
+                      'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors',
+                      selectedIds.includes(guest.id) ? 'bg-primary-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                    ]">
+                      <User class="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        {{ guest.name }}
+                        <span class="text-[10px] font-black uppercase tracking-tighter bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-2 py-0.5 rounded">Principal</span>
+                      </h4>
+                      <p class="text-xs text-slate-500">{{ guest.phone }}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span v-if="guest.attended" class="text-emerald-500 flex items-center gap-1 text-xs font-bold bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-lg">
+                      <CheckCircle2 class="w-3 h-3" />
+                      Presente
+                    </span>
+                    <div v-else :class="[
+                      'w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all',
+                      selectedIds.includes(guest.id) ? 'bg-primary-600 border-primary-600' : 'border-slate-200 dark:border-slate-700'
+                    ]">
+                      <CheckCircle2 v-if="selectedIds.includes(guest.id)" class="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Acompanhantes -->
+                <div 
+                  v-for="companion in guest.companions" 
+                  :key="companion.id"
+                  @click="!companion.attended && toggleSelection(companion.id)"
+                  :class="[
+                    'p-5 rounded-3xl border transition-all cursor-pointer flex items-center justify-between group',
+                    companion.attended ? 'bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 opacity-60' : 
+                    selectedIds.includes(companion.id) ? 'bg-primary-50 dark:bg-primary-900/10 border-primary-200 dark:border-primary-800 shadow-lg shadow-primary-500/5' : 
+                    'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-primary-800'
+                  ]"
+                >
+                  <div class="flex items-center gap-4">
+                    <div :class="[
+                      'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors',
+                      selectedIds.includes(companion.id) ? 'bg-primary-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                    ]">
+                      <User class="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        {{ companion.name }}
+                        <span v-if="companion.isChild" class="text-[10px] font-black uppercase tracking-tighter bg-amber-500 text-white px-2 py-0.5 rounded">Criança</span>
+                      </h4>
+                      <p class="text-xs text-slate-500">Acompanhante</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span v-if="companion.attended" class="text-emerald-500 flex items-center gap-1 text-xs font-bold bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-lg">
+                      <CheckCircle2 class="w-3 h-3" />
+                      Presente
+                    </span>
+                    <div v-else :class="[
+                      'w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all',
+                      selectedIds.includes(companion.id) ? 'bg-primary-600 border-primary-600' : 'border-slate-200 dark:border-slate-700'
+                    ]">
+                      <CheckCircle2 v-if="selectedIds.includes(companion.id)" class="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -162,18 +272,14 @@ const formatAddress = (address?: GuestEvent['event']['address']) => {
               </div>
             </div>
 
-            <div v-if="guest.companionCount > 0" class="flex items-center justify-between p-6 bg-primary-50 dark:bg-primary-900/10 rounded-3xl">
-              <div class="space-y-1">
-                <p class="text-primary-600 dark:text-primary-400 font-black text-lg">Acopanhantes: +{{ guest.companionCount }}</p>
-                <p class="text-primary-700/70 dark:text-primary-400/70 text-xs">Certifique-se de que todos estão presentes.</p>
-              </div>
-              <UserCheck class="w-8 h-8 text-primary-600" />
+            <div v-if="error" class="bg-red-50 dark:bg-red-900/10 p-4 rounded-2xl border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm font-bold text-center">
+              {{ error }}
             </div>
 
             <!-- Action Button -->
             <button 
               @click="handleCheckIn"
-              :disabled="isCheckingIn"
+              :disabled="isCheckingIn || selectedIds.length === 0"
               class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white font-black text-xl rounded-3xl shadow-2xl shadow-primary-500/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
             >
               <Loader2 v-if="isCheckingIn" class="w-6 h-6 animate-spin" />

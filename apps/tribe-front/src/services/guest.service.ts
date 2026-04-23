@@ -58,8 +58,8 @@ export const guestService = {
     return data;
   },
 
-  async checkIn(id: number): Promise<Guest> {
-    const { data } = await api.put(`guests/${id}/check-in`);
+  async checkIn(id: number, companionIds: number[] = []): Promise<Guest> {
+    const { data } = await api.put(`guests/${id}/check-in`, { companionIds });
     return data;
   },
   

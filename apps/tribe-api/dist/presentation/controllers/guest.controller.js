@@ -35,6 +35,7 @@ const create_guest_dto_js_1 = require("../../application/dtos/guest/create-guest
 const update_guest_dto_js_1 = require("../../application/dtos/guest/update-guest.dto.js");
 const update_guest_rsvp_dto_js_1 = require("../../application/dtos/guest/update-guest-rsvp.dto.js");
 const guest_filter_dto_js_1 = require("../../application/dtos/guest/guest-filter.dto.js");
+const check_in_guest_dto_js_1 = require("../../application/dtos/guest/check-in-guest.dto.js");
 let GuestController = class GuestController {
     createGuestUseCase;
     findGuestsByEventUseCase;
@@ -97,8 +98,11 @@ let GuestController = class GuestController {
     async updateStatus(id, dto) {
         return this.updateGuestRSVPUseCase.execute({ id, status: dto.status });
     }
-    async checkIn(id) {
-        return this.checkInGuestUseCase.execute({ id });
+    async checkIn(id, dto) {
+        return this.checkInGuestUseCase.execute({
+            id,
+            companionIds: dto.companionIds
+        });
     }
     async getById(id) {
         return this.getGuestByIdUseCase.execute({ id });
@@ -198,8 +202,9 @@ __decorate([
     (0, common_1.Put)('guests/:id/check-in'),
     (0, roles_decorator_js_1.Roles)(user_role_enum_js_1.UserRole.SUPER, user_role_enum_js_1.UserRole.EDIT, user_role_enum_js_1.UserRole.CHECKER),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, check_in_guest_dto_js_1.CheckInGuestDto]),
     __metadata("design:returntype", Promise)
 ], GuestController.prototype, "checkIn", null);
 __decorate([

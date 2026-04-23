@@ -6,6 +6,7 @@ import { GuestResponseDto } from '../../dtos/guest/guest-response.dto.js';
 
 interface CheckInGuestInput {
   id: number;
+  companionIds?: number[];
 }
 
 @Injectable()
@@ -22,10 +23,19 @@ export class CheckInGuestUseCase
       throw new NotFoundException('Guest not found');
     }
 
-    const updated = await this.guestRepository.update(guest.id, {
-      attended: true,
-    });
+    await this.processCheckIn(input.id, input.companionIds);
 
-    return GuestResponseDto.fromDomain(updated);
+    const updated = await this.guestRepository.findById(input.id);
+    return GuestResponseDto.fromDomain(updated!);
+  }
+
+  private async processCheckIn(id: number, companionIds?: number[]): Promise<void> {
+    const idsToCheckIn = [id, ...(companionIds || [])];
+    
+    await Promise.all(
+      idsToCheckIn.map((guestId) => 
+        this.guestRepository.update(guestId, { attended: true })
+      )
+    );
   }
 }

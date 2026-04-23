@@ -26,10 +26,13 @@ let CheckInGuestUseCase = class CheckInGuestUseCase {
         if (!guest) {
             throw new common_1.NotFoundException('Guest not found');
         }
-        const updated = await this.guestRepository.update(guest.id, {
-            attended: true,
-        });
+        await this.processCheckIn(input.id, input.companionIds);
+        const updated = await this.guestRepository.findById(input.id);
         return guest_response_dto_js_1.GuestResponseDto.fromDomain(updated);
+    }
+    async processCheckIn(id, companionIds) {
+        const idsToCheckIn = [id, ...(companionIds || [])];
+        await Promise.all(idsToCheckIn.map((guestId) => this.guestRepository.update(guestId, { attended: true })));
     }
 };
 exports.CheckInGuestUseCase = CheckInGuestUseCase;

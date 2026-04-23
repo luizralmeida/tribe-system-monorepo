@@ -3,10 +3,12 @@ import type { IGuestRepository } from '../../../domain/repositories/guest.reposi
 import { GuestResponseDto } from '../../dtos/guest/guest-response.dto.js';
 interface CheckInGuestInput {
     id: number;
+    companionIds?: number[];
 }
 export declare class CheckInGuestUseCase implements IUseCase<CheckInGuestInput, GuestResponseDto> {
     private readonly guestRepository;
     constructor(guestRepository: IGuestRepository);
     execute(input: CheckInGuestInput): Promise<GuestResponseDto>;
+    private processCheckIn;
 }
 export {};

@@ -33,6 +33,7 @@ import { UpdateGuestDto } from '../../application/dtos/guest/update-guest.dto.js
 import { UpdateGuestRSVPDto } from '../../application/dtos/guest/update-guest-rsvp.dto.js';
 import { GuestFilterDto } from '../../application/dtos/guest/guest-filter.dto.js';
 import { PaginationWithFilterQueryDto } from '../../application/dtos/pagination.dto.js';
+import { CheckInGuestDto } from '../../application/dtos/guest/check-in-guest.dto.js';
 
 interface MulterFile {
   buffer: Buffer;
@@ -146,8 +147,14 @@ export class GuestController {
 
   @Put('guests/:id/check-in')
   @Roles(UserRole.SUPER, UserRole.EDIT, UserRole.CHECKER)
-  async checkIn(@Param('id', ParseIntPipe) id: number) {
-    return this.checkInGuestUseCase.execute({ id });
+  async checkIn(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CheckInGuestDto,
+  ) {
+    return this.checkInGuestUseCase.execute({ 
+      id, 
+      companionIds: dto.companionIds 
+    });
   }
 
   @Public()

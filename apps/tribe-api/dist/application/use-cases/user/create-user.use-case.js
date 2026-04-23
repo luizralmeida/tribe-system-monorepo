@@ -32,6 +32,7 @@ let CreateUserUseCase = class CreateUserUseCase {
         const hashedPassword = await this.hashService.hash(input.password);
         const user = await this.userRepository.save({
             ...input,
+            active: input.active ?? true,
             password: hashedPassword,
         });
         if (input.eventIds?.length) {

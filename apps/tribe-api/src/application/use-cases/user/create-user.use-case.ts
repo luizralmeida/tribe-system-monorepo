@@ -30,6 +30,7 @@ export class CreateUserUseCase
 
     const user = await this.userRepository.save({
       ...input,
+      active: input.active ?? true,
       password: hashedPassword,
     });
 

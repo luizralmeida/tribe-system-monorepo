@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { userService } from '../services/user.service';
 import { Plus, Pencil, Trash2, Shield, User, Mail, Search } from 'lucide-vue-next';
+import { UserRoleLabels } from '../types/enums';
 import type { User as UserType } from '../types';
 import UserFormModal from '../components/UserFormModal.vue';
 
@@ -59,7 +60,7 @@ onMounted(async () => {
         class="btn-primary flex items-center gap-2 group"
       >
         <Plus class="w-5 h-5 transition-transform group-hover:rotate-90" />
-        <span>Novo Administrador</span>
+        <span>Novo Usuário</span>
       </button>
     </div>
 
@@ -87,7 +88,7 @@ onMounted(async () => {
         <div class="bg-slate-100 dark:bg-white/5 w-20 h-20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
           <User class="w-10 h-10 text-slate-400" />
         </div>
-        <p class="text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-xs">Nenhum administrador encontrado</p>
+        <p class="text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-xs">Nenhum usuário encontrado</p>
       </div>
 
       <div v-else>
@@ -128,7 +129,7 @@ onMounted(async () => {
                       'text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border',
                       user.role === 'SUPER' ? 'bg-primary-500/10 text-primary-600 border-primary-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
                     ]">
-                      {{ user.role }}
+                      {{ UserRoleLabels[user.role as keyof typeof UserRoleLabels] }}
                     </span>
                   </div>
                 </td>
@@ -182,7 +183,7 @@ onMounted(async () => {
                   'text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border',
                   user.role === 'SUPER' ? 'bg-primary-500/10 text-primary-600 border-primary-500/20' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
                 ]">
-                  {{ user.role }}
+                  {{ UserRoleLabels[user.role as keyof typeof UserRoleLabels] }}
                 </span>
               </div>
 

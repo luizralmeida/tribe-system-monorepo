@@ -5,12 +5,12 @@ import {
   User, 
   Mail, 
   Lock, 
-  Shield, 
   CheckCircle2,
-  UserPlus
+  UserPlus,
+  Phone
 } from 'lucide-vue-next';
 import { userService } from '../services/user.service';
-import { UserRole } from '../types/enums';
+import { UserRole, UserRoleLabels } from '../types/enums';
 import type { User as UserType } from '../types';
 
 interface Props {
@@ -23,6 +23,7 @@ const emit = defineEmits(['close', 'success']);
 const form = ref({
   name: '',
   email: '',
+  phone: '',
   password: '',
   role: UserRole.VIEW as UserRole
 });
@@ -35,6 +36,7 @@ onMounted(() => {
     form.value = {
       name: props.user.name,
       email: props.user.email,
+      phone: props.user.phone || '',
       password: '',
       role: props.user.role as UserRole
     };
@@ -54,6 +56,7 @@ const handleSubmit = async () => {
     const payload: any = {
       name: form.value.name,
       email: form.value.email,
+      phone: form.value.phone,
       role: form.value.role,
     };
     
@@ -113,11 +116,21 @@ const handleSubmit = async () => {
               </div>
 
               <!-- Email -->
-              <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">E-mail</label>
-                <div class="relative group">
-                  <Mail class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-600 transition-colors" />
-                  <input v-model="form.email" type="email" placeholder="email@exemplo.com" class="input-premium pl-12" required />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">E-mail</label>
+                  <div class="relative group">
+                    <Mail class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-600 transition-colors" />
+                    <input v-model="form.email" type="email" placeholder="email@exemplo.com" class="input-premium pl-12" required />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">Telefone</label>
+                  <div class="relative group">
+                    <Phone class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-600 transition-colors" />
+                    <input v-model="form.phone" type="tel" placeholder="(00) 00000-0000" class="input-premium pl-12" required />
+                  </div>
                 </div>
               </div>
 
@@ -135,29 +148,18 @@ const handleSubmit = async () => {
               <!-- Role Selector -->
               <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 ml-1">Nível de Permissão</label>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                    <button 
                     type="button"
-                    @click="form.role = UserRole.VIEW"
+                    v-for="role in Object.values(UserRole)"
+                    :key="role"
+                    @click="form.role = role"
                     :class="[
-                      'px-4 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all',
-                      form.role === UserRole.VIEW ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-600/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400'
+                      'px-3 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all text-center',
+                      form.role === role ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-600/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400'
                     ]"
                    >
-                     Colaborador
-                   </button>
-                   <button 
-                    type="button"
-                    @click="form.role = UserRole.SUPER"
-                    :class="[
-                      'px-4 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all',
-                      form.role === UserRole.SUPER ? 'bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-600/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400'
-                    ]"
-                   >
-                     <div class="flex items-center justify-center gap-2">
-                        <Shield class="w-3 h-3" />
-                        Admin
-                     </div>
+                     {{ UserRoleLabels[role] }}
                    </button>
                 </div>
               </div>

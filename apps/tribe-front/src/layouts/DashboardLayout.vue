@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import ThemeToggle from '../components/ThemeToggle.vue';
 import { navigationConfig } from '../config/navigation';
 import { computed } from 'vue';
+import { UserRoleLabels } from '../types/enums';
 import horizontalFullLogo from '@/assets/horizontal-full-logo.svg';
 
 const authStore = useAuthStore();
@@ -59,7 +60,7 @@ const navItems = computed(() => {
              </div>
              <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ authStore.user?.name }}</p>
-                <p class="text-xs text-slate-500 truncate lowercase">{{ authStore.user?.role }}</p>
+                <p class="text-xs text-slate-500 truncate lowercase">{{ UserRoleLabels[authStore.user?.role as keyof typeof UserRoleLabels] }}</p>
              </div>
           </div>
           <button

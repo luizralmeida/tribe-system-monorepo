@@ -7,6 +7,13 @@ export const UserRole = {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
+export const UserRoleLabels: Record<UserRole, string> = {
+  [UserRole.SUPER]: 'Admin',
+  [UserRole.EDIT]: 'Anfitrião',
+  [UserRole.VIEW]: 'Visualização',
+  [UserRole.CHECKER]: 'Segurança',
+};
+
 export const GuestStatus = {
   CONFIRMED: 'CONFIRMED',
   NOT_CONFIRMED: 'NOT_CONFIRMED',
